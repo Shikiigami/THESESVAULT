@@ -1,0 +1,238 @@
+  /* Optional: style the scrollbar */
+
+  .scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 5px;
+  }
+  
+  .scroll::-webkit-scrollbar-thumb {
+    background-color: #d7d5d5;
+    border-radius: 4px;
+  }
+  .login {
+    min-height: 100vh;
+  }
+  
+  .bg-image {
+    background-image: url('../img/library.jpg');
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-size: cover;
+    background-position: center;
+    
+  }
+  
+  .login-heading {
+    font-weight: 300;
+  }
+  
+  .btn-login {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+    padding: 0.75rem 1rem;
+  }
+  .form-card{
+    padding: 20px 50px 20px 50px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+  /* Create the falling-alert animation */
+  @keyframes falling-alert {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  /* Apply the animation to the alert element */
+  .falling-alert {
+    animation: falling-alert 1s ease-in-out;
+  }
+
+  /* Style the fixed-top-alert container */
+  .fixed-mtop-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    
+  }
+
+  /* Style the alerts to span full width */
+  .login-alert {
+    width: 100%;
+    padding: 15px;
+
+  }
+
+  /* Define the fade-out-up animation */
+@keyframes fade-out-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+/* Apply the animation to the alert element */
+.login-alert.fade-out-up {
+  animation: fade-out-up 1s ease-in-out;
+}
+.link-nav{
+  float: right;
+  padding: 7px;
+  background-color: #fdB147;
+  color: rgb(255, 255, 255);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+
+.fav-button{
+  background: none; 
+  border: none;
+  padding: 0;
+  font: inherit; 
+  cursor: pointer;
+  float: right;
+  margin: 0;
+  vertical-align: middle;
+  color: blue;
+}
+
+.carousel-control-prev-icon{
+ background-color: green;
+}
+.custom-star-icon{
+  color:blue;
+}
+.google-btn {
+  width: 184px;
+  height: 42px;
+  background-color: #4286f400;
+  border: 1px solid blue;
+  border-radius: 2px;
+  transition: box-shadow 0.3s; 
+  margin-left: 10px;
+}
+
+.google-btn:hover {
+  box-shadow: 2px 2px 4px rgba(17, 14, 14, 0.25), -2px -2px 4px rgba(17, 14, 14, 0.25); 
+}
+
+.google-icon-wrapper {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border: .5px .5px .5px 1px solid blue;
+  border-right: 1px solid blue;
+  
+}
+
+.google-icon {
+  position: absolute;
+  margin-top: 11px;
+  margin-left: 11px;
+  width: 18px;
+  height: 18px;
+ 
+}
+
+.btn-text {
+  float: right;
+  margin: 11px 11px 0 0;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  color: blue;
+}
+
+.btn-text:hover {
+  text-decoration: none;
+  color: rgb(0, 136, 255);
+}
+
+.password-input {
+  position: relative;
+}
+
+.forgot-link {
+  position: absolute;
+  right: 5px; /* Adjust the positioning as needed */
+  top: 6px;
+  color: rgb(0, 102, 255); /* Customize the link color */
+  text-decoration: none; /* Add underline to the link */
+  cursor: pointer;
+
+}
+.text-center{
+  margin-right: 100px;
+}
+/* For mobile devices */
+@media only screen and (max-width: 767px) {
+  .text-center{
+    margin-left: 110px;
+  }
+
+  .btn.btn-primary {
+      width: 80%; /* Adjust width as needed */
+      max-width: 200px; /* Adjust maximum width as needed */
+      margin-bottom: 20px; /* Optional: Add some space between the buttons */
+  }
+
+  .google-btn {
+      width: 70%; /* Adjust width as needed */
+      max-width: 300px; /* Adjust maximum width as needed */
+      height: 42px;
+      background-color: #4286f400;
+      border: 1px solid blue;
+      border-radius: 2px;
+      transition: box-shadow 0.3s;
+      margin: 0 auto; /* Center the button horizontally */
+      margin-top: -20px;
+  }
+
+  .google-btn:hover {
+      box-shadow: 2px 2px 4px rgba(17, 14, 14, 0.25), -2px -2px 4px rgba(17, 14, 14, 0.25);
+  }
+
+  .google-icon-wrapper {
+      display: inline-block; /* Display as inline block */
+      vertical-align: middle; /* Align vertically in the middle */
+      width: 40px;
+      height: 40px;
+      background-color: #fff;
+      border: .5px .5px .5px 1px solid blue;
+      border-right: 1px solid blue;
+  }
+
+  .google-icon {
+      margin-top: 11px;
+      margin-left: 11px;
+      width: 18px;
+      height: 18px;
+  }
+
+  .btn-text {
+      display: inline-block; /* Display as inline block */
+      vertical-align: middle; /* Align vertically in the middle */
+      margin-left: 10px; /* Adjust the margin as needed */
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      text-decoration: none;
+      color: blue;
+  }
+
+  .btn-text:hover {
+      text-decoration: none;
+      color: rgb(0, 136, 255);
+  }
+}
+
+
