@@ -43,7 +43,7 @@
   </head>
   <body>
           <div class="form-container">
-              <p class="title"><img src="{{asset('img/thesesvault.png')}}" alt="" width="200"></p>
+            <p class="title"><a href ="https://psuthesesvault.online"><img src="{{asset('img/tvlogo.png')}}" alt="" width="250" style="margin-right: 15px;"></a></p>
               <form class="form" method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
                @csrf
                <input id="name" type="text" class="input @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" placeholder="ex. Lastname, Firstname MI" required autocomplete="name" autofocus>
@@ -210,7 +210,7 @@
               <p class="page-link">
                 <input class="page-link-label" style="float: left; margin-top: 9px;" type="checkbox" value="" id="invalidCheck2" required>
                 <label style="float: left; margin-top: 9px;"  class="page-link-label" for="invalidCheck2">
-                  <span style="margin-left: 5px;"><a href="#" id="termsLink">Agree to terms and conditions</a></span>
+                  <span style="margin-left: 5px;"><span>I agree to </span><a href="#" id="termsLink">Terms and Conditions</a></span>
                 </label>
               </p>
          <script>

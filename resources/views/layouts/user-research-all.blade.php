@@ -154,9 +154,6 @@ setTimeout(hidePreloader, 1000);
           </div>
         </div>
       </div>
-            
- 
-
       <!-- view modal -->
   <div class="modal fade" id="verticalycentered7{{$research->id}}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">

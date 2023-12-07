@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 04, 2023 at 02:24 PM
+-- Generation Time: Dec 07, 2023 at 09:09 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -87,7 +87,9 @@ INSERT INTO `auditlog` (`id`, `adminId`, `admin_action`, `research`, `action_dat
 (28, 3, 'Upload', 'Baute-Norkizah-M.-Exer3.pdf', '2023-11-30 02:43:51', '2023-11-30 02:43:51', '2023-11-30 02:43:51'),
 (29, 3, 'Upload', '1-Deploying Web Application in Heroku (4).pdf', '2023-11-30 02:47:56', '2023-11-30 02:47:56', '2023-11-30 02:47:56'),
 (30, 3, 'Delete', '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', '2023-11-30 02:49:53', '2023-11-30 02:49:53', '2023-11-30 02:49:53'),
-(31, 3, 'Upload', '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', '2023-11-30 02:54:47', '2023-11-30 02:54:47', '2023-11-30 02:54:47');
+(31, 3, 'Upload', '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', '2023-11-30 02:54:47', '2023-11-30 02:54:47', '2023-11-30 02:54:47'),
+(32, 3, 'Edit', 'pdfcoffee.com_1-8-15-pdf-free.pdf', '2023-12-07 16:05:08', '2023-12-07 16:05:08', '2023-12-07 16:05:08'),
+(33, 3, 'Edit', 'Quote29.pdf', '2023-12-07 16:06:56', '2023-12-07 16:06:56', '2023-12-07 16:06:56');
 
 -- --------------------------------------------------------
 
@@ -440,7 +442,14 @@ INSERT INTO `history` (`hid`, `search_name`, `user_id`, `created_at`, `updated_a
 (348, 'jent', 96, '2023-11-24 06:26:13', '2023-11-24 06:26:13'),
 (349, 'CEAT', 62, '2023-11-25 07:14:07', '2023-11-25 07:14:07'),
 (351, 'HCI_POWERPOINT', 99, '2023-11-27 01:30:43', '2023-11-27 01:30:43'),
-(353, '1-Deploying Web Application in Heroku', 3, '2023-11-29 18:45:18', '2023-11-29 18:45:18');
+(353, '1-Deploying Web Application in Heroku', 3, '2023-11-29 18:45:18', '2023-11-29 18:45:18'),
+(354, 'masdo', 104, '2023-12-07 08:03:03', '2023-12-07 08:03:03'),
+(355, 'masdo', 104, '2023-12-07 08:03:07', '2023-12-07 08:03:07'),
+(356, 'masdo', 3, '2023-12-07 08:04:33', '2023-12-07 08:04:33'),
+(357, 'masdo', 3, '2023-12-07 08:05:01', '2023-12-07 08:05:01'),
+(358, 'masdo', 3, '2023-12-07 08:05:09', '2023-12-07 08:05:09'),
+(359, 'masdo', 3, '2023-12-07 08:05:40', '2023-12-07 08:05:40'),
+(360, 'Quote29', 104, '2023-12-07 08:07:33', '2023-12-07 08:07:33');
 
 -- --------------------------------------------------------
 
@@ -538,10 +547,10 @@ INSERT INTO `research` (`id`, `callno`, `filename`, `author`, `program`, `date_p
 (5, 'CEAT 299812', 'Module-1-Lesson-5-IER.pdf', 'Randel Vitero', 'BS Electrical Engineering', '2023-10-06', 130, 'Rizza Armildez', 'Technology', 'Coron', 'Vitero. R. et al.(2021).Module-1-Lesson-5-IER.Palawan State University.', 'https://drive.google.com/file/d/1HYkYk6tPlC-otBstBxBUyZTjRTcIzv3U/view?usp=drive_link', '2023-09-10 01:58:23', '2023-11-26 22:17:06'),
 (6, 'CS 12321', 'JD-Quotation.pdf', 'Ellaine Mae Llacuna, Llado, Maurene C., Pilarmeo, Francis Joe P., Vigo, Honeyly M.', 'BS Computer Science', '2023-09-12', 131, 'Rizza Armildez', 'Technology', 'Sofronio Española', 'Llacun, E.M. et al.(2021).JD-Quotation. Palawan State University', 'https://drive.google.com/file/d/13woq9W4l5aa6L-fHvvItiFKiYf0B6pU6/view?usp=drive_link', '2023-09-11 22:39:03', '2023-11-26 22:16:09'),
 (12, 'IT 2341', 'Duplichecker-Plagiarism-Report.pdf', 'Ganeso Jonard', 'BS Information Technology', '2023-09-12', 131, 'Regina Bravo', 'Technology', 'Roxas', 'Ganeso, J. (2021).Duplichecker-Plagiarism-Report. Palawan State University', 'https://drive.google.com/file/d/1ZqtLkTMZMOWttOVyQfCjvHRM5r15PUH9/view?usp=drive_link', '2023-09-12 00:37:54', '2023-11-26 22:11:57'),
-(13, 'CEAT 6342', 'pdfcoffee.com_1-8-15-pdf-free.pdf', 'Jordan Masdo', 'BS Architecture', '2023-09-14', 130, 'Ivan Castillo', 'Technology', 'Brooke\'s Point', 'Masdo. J. (2021).pdfcoffee.com_1-8-15-pdf-free. Palawan State University', '', '2023-09-13 16:01:03', '2023-11-24 08:00:56'),
+(13, 'CEAT 6342', 'pdfcoffee.com_1-8-15-pdf-free.pdf', 'Jordan Masdo', 'BS Architecture', '2023-09-14', 130, 'Ivan Castillo', 'Technology', 'Brooke\'s Point', 'Masdo. J. (2021).pdfcoffee.com_1-8-15-pdf-free. Palawan State University', 'https://drive.google.com/file/d/1nm7fFjkmGrm3MltYPfgKKr-HS4tVzWkZ/view?usp=drive_link', '2023-09-13 16:01:03', '2023-12-07 08:05:08'),
 (16, 'IT 173911', 'HAHAHAH HAHAHH -2019 6AFCSYEYE HUUWSUUQUIW- SHYEYEGW.pdf', 'Calma, Llado, Orga, Casayas', 'BS Information Technology', '2023-09-19', 131, 'Rizza Armildez', 'Technology', 'Narra', 'Calma, I. et al.,(2023)HAHAHAH HAHAHH -2019 6AFCSYEYE HUUWSUUQUIW- SHYEYEGW. Palawan State University', 'https://drive.google.com/file/d/1zr2xBdpM4T7RLwvAjohYTXfbW8NFRP_E/view?usp=drive_link', '2023-09-19 00:38:57', '2023-11-26 22:13:39'),
 (17, 'IT 23142', 'IT-PLAYERS-2023.pdf', 'Maurene Llado', 'BS Information Technology', '2023-10-01', 131, 'Rizza Armildez', 'Business', 'Narra', 'Llado, M. et al. (2023).IT-PLAYERS-2023. Palawan State. University', 'https://drive.google.com/file/d/1ysQKgiBZ1ZKt9OGLmq0jUQI7Bz7vITvl/view?usp=drive_link', '2023-10-01 03:25:48', '2023-11-26 22:15:01'),
-(18, 'CEAT 55123', 'Quote29.pdf', 'Shammel Binaguiohan, Brix sobretodo', 'BS Architecture', '2023-10-04', 130, 'Larry Caduada', 'Technology', 'Cuyo', NULL, '', '2023-10-04 09:08:12', '2023-10-07 15:32:22'),
+(18, 'CEAT 55123', 'Quote29.pdf', 'Shammel Binaguiohan, Brix sobretodo', 'BS Architecture', '2023-10-04', 130, 'Larry Caduada', 'Technology', 'Cuyo', 'Binaguiohan S. et al., (2023). Qoute29. Palawan State University', 'https://drive.google.com/file/d/1cKaTAy4lt61mE9bnh9E4o4EPhwoGKaY1/view?usp=drive_link', '2023-10-04 09:08:12', '2023-12-07 08:06:56'),
 (20, 'MB 3215', 'CONFIDENTIALITY AGREEMENT.pdf', 'Sean Harvey Orga.', 'BS Medical Biology', '2023-10-07', 131, 'Florideth Jeanne Gatan', 'Education', 'Linapacan', 'Harvey, S, et al. (2021).CONFIDENTIALITY AGREEMENT. Palawan State University', 'https://drive.google.com/file/d/1zMi70nT5w5s6hfUB8YBez8TyxO-NE7uR/view?usp=drive_link', '2023-10-07 04:15:44', '2023-11-26 22:11:37'),
 (21, 'ES 4321', 'VITERORANDEL-EXERCISE-5.pdf', 'Nerysol Namuco', 'BS Environmental Science', '2023-10-18', 131, 'Jent Carlos Gardose', 'Education', 'Roxas', 'Namuco, N et.al', '', '2023-10-07 04:35:01', '2023-11-23 14:32:35'),
 (23, 'IT 2162', 'UIUXB1-Maurene Llado-Excer1.pdf', 'Maurene Llado', 'BS Information Technology', '2023-10-09', 131, 'Bemsor Caabay', 'Technology', 'Main Campus', 'Calma , Casayas etal', '', '2023-10-09 12:11:46', '2023-10-09 12:11:46'),
@@ -585,13 +594,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `profile_picture`, `program`, `college_id`, `interest`, `role`, `email_verified_at`, `last_login`, `status`, `google_id`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(3, 'ThesesVault', 'mau@gmail.com', '1698588654.jpg', 'BS Information Technology', 131, 'Technology', 'admin', '2023-09-03 22:37:55', '2023-11-29 22:50:07', 'Active', NULL, '$2y$10$G1ff/CTGSD4aHQ55D7AY7.fEdZblYLTIvjEF03T3Zz0qfW583mdCW', 'IalmsBShkxfuaa4qK6dLIB7geWyastf0M43k6v87asilWgSEB6cRHHJfIHue', '2023-09-03 22:37:08', '2023-11-29 14:50:07'),
+(3, 'ThesesVault', 'mau@gmail.com', '1698588654.jpg', 'BS Information Technology', 131, 'Technology', 'admin', '2023-09-03 22:37:55', '2023-12-07 15:57:32', 'Active', NULL, '$2y$10$G1ff/CTGSD4aHQ55D7AY7.fEdZblYLTIvjEF03T3Zz0qfW583mdCW', 'LD1cJiL8MOHZbWjWszvQbr87tpqKOkMPyhZ4RPrHCY2sh6ShbvsVUgLBLfuy', '2023-09-03 22:37:08', '2023-12-07 07:57:32'),
 (4, 'Maurene Llado', 'maurenellado@gmail.com', '1695483409.png', 'BS Information Technology', 131, 'Business', 'user', '2023-09-04 00:41:01', '2023-09-21 19:19:29', 'Inactive', NULL, '$2y$10$SrTB0f5hdEzWupellbsQi.oofoAfJalIvPAD09zuhkPpkUriWkKGy', 'PzVjFniBHkAmi3snm8VzS0RZRyxCovMPHLeGoD4EgvyEapu8WoxNURuvZLao', '2023-09-04 00:39:22', '2023-09-23 07:36:51'),
-(62, 'Maurene Llado', 'maurenecayao@gmail.com', '1700491646.jpg', 'BS Architecture', 130, 'Technology', 'user', '2023-10-18 11:48:35', '2023-12-01 11:54:58', 'Active', '108929174058780206522', '$2y$10$wpQvbuu/jZzBTYAtB65sR.0XmJHEizks.z2MBhHFttEIzCIjPVAG6', 'LjIIOE56saWjkXU2VXJLhOcOY1IHjR0ALVVNc0IXUUF2dRNNQk50RnoYqGcu', '2023-10-18 11:47:16', '2023-12-01 03:54:58'),
+(62, 'Maurene Llado', 'maurenecayao@gmail.com', '1700491646.jpg', 'BS Architecture', 130, 'Technology', 'user', '2023-10-18 11:48:35', '2023-12-07 15:59:24', 'Inactive', '108929174058780206522', '$2y$10$wpQvbuu/jZzBTYAtB65sR.0XmJHEizks.z2MBhHFttEIzCIjPVAG6', 'sugazyCgFE4Du0vVubVv8Qd70fwvTZLmhT2ocvSGaafXfbI6Y8u1Q8hlaJXt', '2023-10-18 11:47:16', '2023-12-07 07:59:32'),
 (95, 'glu', '202180192@psu.palawan.edu.ph', NULL, 'BS Medical Biology', NULL, 'Business', 'user', NULL, '2023-11-24 13:58:20', 'Inactive', '109266244772006004865', '$2y$10$HwNxA9T3eRi5iWv.HcMeyukKsDjeonUoG4p8/UmBcWn6INpYJONIy', NULL, '2023-11-24 05:58:20', '2023-11-24 05:59:10'),
 (96, 'Mia Garcellano', '202180094@psu.palawan.edu.ph', '1700807294.jpg', 'BS Information Technology', 131, NULL, 'user', '2023-11-24 06:10:30', '2022-12-13 14:09:27', 'Inactive', '115993481088615896391', '$2y$10$14Rty7arY0SkxwEV4nvh6.7KM6IN8cQEgPR/cueHSWW/rAtjJnhju', NULL, '2023-11-24 06:09:27', '2023-11-24 06:31:24'),
 (99, 'Ingrid Calma', '202080086@psu.palawan.edu.ph', NULL, 'BS Information Technology', 131, 'Education', 'admin', '2023-11-27 01:23:26', '2023-12-04 21:12:06', 'Active', NULL, '$2y$10$017bM2Z4ompnYshaPK4oee2l7c/Dv/pXudKIWC8rjZP4nHc6Yngqe', 'oezzkj106TiokfAa8luZBhVgxo9tEUSUKEVDlpXUxt5yPyaqSa9aiVzrOi5B', '2023-11-27 01:22:50', '2023-12-04 13:12:06'),
-(104, 'Maurene', '202080070@psu.palawan.edu.ph', NULL, 'BS Civil Engineering', 130, 'Business', 'user', '2023-11-30 14:55:31', '2023-12-04 21:15:10', 'Active', NULL, '$2y$10$gttTdMjYcFb9JDKqqxB05OqaQcIhn1JDosBdMOYf00Kil4xVFdbXW', NULL, '2023-11-30 14:55:01', '2023-12-04 13:15:10');
+(104, 'Maurene', '202080070@psu.palawan.edu.ph', NULL, 'BS Civil Engineering', 130, 'Business', 'user', '2023-11-30 14:55:31', '2023-12-07 15:59:43', 'Active', NULL, '$2y$10$gttTdMjYcFb9JDKqqxB05OqaQcIhn1JDosBdMOYf00Kil4xVFdbXW', NULL, '2023-11-30 14:55:01', '2023-12-07 07:59:43');
 
 -- --------------------------------------------------------
 
@@ -666,7 +675,13 @@ INSERT INTO `view` (`vid`, `research_id`, `filename`, `userview_id`, `research_c
 (303, 42, '1-Deploying Web Application in Heroku (4).pdf', 62, 131, 131, '2023-11-29 18:49:10', '2023-11-29 18:49:10', '2023-11-29 18:49:10'),
 (304, 42, '1-Deploying Web Application in Heroku (4).pdf', 62, 131, 131, '2023-11-29 20:26:56', '2023-11-29 20:26:56', '2023-11-29 20:26:56'),
 (306, 43, '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', 104, 130, 130, '2023-12-04 13:14:34', '2023-12-04 13:14:34', '2023-12-04 13:14:34'),
-(307, 43, '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', 104, 130, 130, '2023-12-04 13:15:44', '2023-12-04 13:15:44', '2023-12-04 13:15:44');
+(307, 43, '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', 104, 130, 130, '2023-12-04 13:15:44', '2023-12-04 13:15:44', '2023-12-04 13:15:44'),
+(308, 43, '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', 104, 130, 130, '2023-12-06 04:33:51', '2023-12-06 04:33:51', '2023-12-06 04:33:51'),
+(309, 31, 'Castillas-Lereza-Mae-V.-Exer4.pdf', 104, 130, 130, '2023-12-07 08:00:11', '2023-12-07 08:00:11', '2023-12-07 08:00:11'),
+(310, 43, '8-SCHEDULE-OF-PROPOSAL-DEFENSE-2ND-SEM-2022-2023.pdf', 104, 130, 130, '2023-12-07 08:00:58', '2023-12-07 08:00:58', '2023-12-07 08:00:58'),
+(311, 13, 'pdfcoffee.com_1-8-15-pdf-free.pdf', 104, 130, 130, '2023-12-07 08:05:20', '2023-12-07 08:05:20', '2023-12-07 08:05:20'),
+(312, 18, 'Quote29.pdf', 104, 130, 130, '2023-12-07 08:07:41', '2023-12-07 08:07:41', '2023-12-07 08:07:41'),
+(313, 18, 'Quote29.pdf', 104, 130, 130, '2023-12-07 08:07:47', '2023-12-07 08:07:47', '2023-12-07 08:07:47');
 
 --
 -- Indexes for dumped tables
@@ -790,7 +805,7 @@ ALTER TABLE `adviser`
 -- AUTO_INCREMENT for table `auditlog`
 --
 ALTER TABLE `auditlog`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `audit_trail`
@@ -808,13 +823,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `fid` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=158;
+  MODIFY `fid` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=159;
 
 --
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `hid` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=354;
+  MODIFY `hid` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=361;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -844,7 +859,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `view`
 --
 ALTER TABLE `view`
-  MODIFY `vid` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=308;
+  MODIFY `vid` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=314;
 
 --
 -- Constraints for dumped tables
