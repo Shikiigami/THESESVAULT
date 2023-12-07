@@ -98,13 +98,10 @@
                   $('#college').change(function() {
                       var selectedCollege = $(this).val();
                       var programSelect = $('#Program');
-          
-                      // Remove all options first except the default option
+        
                       programSelect.find('option').not(':first').remove();
           
-                      // Add options based on the selected college
                       if (selectedCollege === '131') {
-                          // College 131 - Add BS Information Technology to BS Marine Biology
                           addProgramOptions(programSelect, [
                               "BS Information Technology",
                               "BS Computer Science",
