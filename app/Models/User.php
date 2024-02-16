@@ -49,10 +49,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Favorites::class, 'user_id', 'id');
     }
-    public function download()
-    {
-        return $this->hasMany(Download::class, 'user_did', 'id');
-    }
+    
     public function user_college()
     {
         return $this->hasMany(View::class, 'user_college', 'college_id');

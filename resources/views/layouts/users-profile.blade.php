@@ -112,7 +112,7 @@ setTimeout(hidePreloader, 1000);
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
             <img src="{{ Auth::user()->profile_picture ? asset('storage/pictures/' . Auth::user()->profile_picture) : asset('img/null-profile.png') }}" alt="Profile Picture" class="rounded-circle">
-              <h2>{{ Auth::user()->name }}</h2>
+              <h2>{{ Auth::user()->name }}</h2> <span>(<?php Auth::user()->role === "user"; echo 'student'; ?>)</span>
               <h3>{{ Auth::user()->email }}</h3>
             </div>
           </div>

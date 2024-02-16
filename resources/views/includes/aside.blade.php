@@ -7,7 +7,7 @@
       <i class="bi bi-grid"></i>
       <span>Dashboard</span>
     </a>
-  </li><!-- End Dashboard Nav -->
+  </li>
 
   <li class="nav-item">
     <a class="nav-link{{ request()->routeIs('file.index') ? '' : ' collapsed' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
@@ -30,26 +30,24 @@
         </a>
       </li>
     </ul>
-  </li><!-- End Components Nav -->
+  </li>
   <li class="nav-item">
     <a class="nav-link{{ request()->routeIs('adviser.index') ? '' : ' collapsed' }}" href="{{route('adviser.index')}}">
       <i class="ri-account-box-fill"></i>
       <span>Advisers</span>
     </a>
-  </li><!-- End User Nav -->
+  </li>
   <li class="nav-item">
     <a class="nav-link{{ request()->routeIs('user-data.list') ? '' : ' collapsed' }}"  href="{{route('user-data.list')}}">
       <i class="bi bi-people"></i>
       <span>Users</span>
     </a>
-  </li><!-- End User Nav -->
+  </li>
   <li class="nav-item">
   <a class="nav-link{{ request()->routeIs('user.adudit-trail') ? '' : ' collapsed' }}" href="{{ route('user.adudit-trail') }}">
     <i class="ri-footprint-line"></i>
     <span>Audit Trail</span>
   </a>
 </li>
-
 </ul>
-
-</aside><!-- End Sidebar-->
+</aside>

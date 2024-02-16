@@ -191,9 +191,22 @@ setTimeout(hidePreloader, 1000);
                 <i class="bx bxs-file"></i>
               </div>
               <div class="ps-3">
-              <h6 class="d-flex align-items-center" style="font-size: 20px;"><a href="#" data-bs-toggle="modal" data-bs-target="#verticalycentered7{{$research->id}}">
-                {{ pathinfo($research->filename, PATHINFO_FILENAME) }}
-              </a></h6>
+                <h6 class="truncate-text d-flex align-items-justify" style="font-size: 17px;">
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#verticalycentered7{{$research->id}}">
+                      <span class="truncate-content">
+                          <?php
+                          $filename = pathinfo($research->filename, PATHINFO_FILENAME);
+                          if (strlen($filename) > 44) {
+                              $truncatedFilename = substr($filename, 0, 50) . '...';
+                              echo htmlspecialchars($truncatedFilename);
+                          } else {
+                              echo htmlspecialchars($filename);
+                          }
+                          ?>
+                      </span>
+                  </a>
+              </h6>
+              
               </div>
             </div>
             <div class="d-flex align-items-start" style="float: right; margin: 10px;">
@@ -225,7 +238,7 @@ setTimeout(hidePreloader, 1000);
              <p class="text-primary">
              <b class="text-dark">Title: </b>{{$research->filename}}<br>
              <b class="text-dark">Authors: </b>{{$research->author}} <br>
-             <b class="text-dark">Published Date: </b> {{$research->date_published}}<br>
+             <b class="text-dark">Approved Date: </b> {{$research->date_published}}<br>
              @php
               $collegeName = ($research->college == 130) ? 'CEAT' : (($research->college == 131) ? 'CS' : 'N/A');
               @endphp

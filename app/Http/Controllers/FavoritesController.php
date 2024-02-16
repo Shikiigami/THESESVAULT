@@ -38,7 +38,7 @@ class FavoritesController extends Controller
         ->first();
 
         if ($existingFile) {
-            return redirect()->back()->with('error', 'File already in Bookmarks');
+            return redirect()->back()->with('error', 'File already in Favorites');
         }  
 
         favorites::create([
@@ -46,7 +46,7 @@ class FavoritesController extends Controller
             'filename' => $research->filename,
         ]);
     
-        return redirect()->back()->with('success', 'File added to Bookmarks.');
+        return redirect()->back()->with('success', 'File added to Favorites.');
 
     }  
 
@@ -78,6 +78,6 @@ class FavoritesController extends Controller
     public function destroy(string $fid){
         $favorites= favorites::findOrFail($fid);
         $favorites->delete();
-        return redirect()->back()->with('success', 'File remove from Bookmarks Successfully');
+        return redirect()->back()->with('success', 'File remove from Favorites Successfully');
     }
 }

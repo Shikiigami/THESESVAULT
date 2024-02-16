@@ -90,19 +90,19 @@ setTimeout(hidePreloader, 1000);
   setTimeout(function () {
     var alerts = document.querySelectorAll('.alert');
     alerts.forEach(function (alert) {
-      alert.classList.add('fade-out-up'); // Apply the fade-out-up animation class
+      alert.classList.add('fade-out-up'); 
 
       setTimeout(function () {
         alert.remove();
-      }, 1000); // Remove the alert after fading out
+      }, 1000); 
     });
-  }, 2000); // Wait for 2 seconds before auto-fading
+  }, 2000); 
 });
 </script>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Home</a></li>
-          <li class="breadcrumb-item active">Bookmarks</li>
+          <li class="breadcrumb-item active">Favorites</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -134,13 +134,13 @@ setTimeout(hidePreloader, 1000);
               </div>
               <div class="ps-3">
               <h6 class="d-flex align-items-center" style="font-size: 20px;"><a href="#" data-bs-toggle="modal" data-bs-target="#verticalycentered7{{$favorites->fid}}">
-                {{ pathinfo($favorites->filename, PATHINFO_FILENAME) }}
+                {{ Illuminate\Support\Str::limit(pathinfo($favorites->filename, PATHINFO_FILENAME), 42, '...') }}
               </a></h6>
               </div>
             </div>
             <div class="d-flex align-items-start" style="float: right; margin: 10px;">
-              <a href="#" data-bs-toggle="modal" data-bs-target="#citation{{$favorites->fid}}"><span class="btn btn-success btn-sm align-items-start;">Citation</span></a>&nbsp;
-              <a href="{{ route('get.view', ['filename' => $favorites->filename]) }}" target="_blank"><span class="btn btn-warning btn-sm align-items-start">View</span></a>&nbsp;
+              <a href="#" data-bs-toggle="modal" data-bs-target="#citation{{$favorites->fid}}"><span class="btn btn-success btn-sm align-items-start;"><i class="bi bi-chat-quote-fill"></i> Citation</span></a>&nbsp;
+              <a href="{{ route('get.view', ['filename' => $favorites->filename]) }}" target="_blank"><span class="btn btn-warning btn-sm align-items-start"><i class="bi bi-eye-fill"></i> View</span></a>&nbsp;
             </div>
           </div>
         </div>
@@ -192,31 +192,6 @@ setTimeout(hidePreloader, 1000);
     </div>
   </div>
   </div> <!--End of Citation Modal -->
-
-   <!-- Start download Modal -->
-   <div class="modal fade" id="download{{$favorites->fid}}" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered  modal-m">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">{{ pathinfo($favorites->filename, PATHINFO_FILENAME) }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-              <h6 style="display: flex; align-items: center;">
-          <i class="ri-alert-line" style="font-size: 40px; color:red;"></i>
-          <span class="text-danger" style="margin-left: 10px;">
-              System will know you if you download this file,
-              You must be responsible for any consequences.
-          </span>
-          </h6>
-          <div class="modal-footer">
-           <a href="{{ route('download.research', ['filename' => $favorites->filename]) }}" class="btn btn-primary btn-sm download-button">Download anyway</a>
-            </div>
-
-            </div>
-          </div>
-        </div>
-    </div><!-- End download modal -->
      
     @endforeach
    @endif

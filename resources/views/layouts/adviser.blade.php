@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -33,9 +32,6 @@
 </head>
 
 <body>
-
-  {{-- preloader --}}
-
   <div id="preloader">
     <div class="jumper">
         <div></div>
@@ -44,17 +40,13 @@
     </div>
 </div>
 <script>
-  // Get the preloader element
 const preloader = document.getElementById('preloader');
 
 function hidePreloader() {
   preloader.style.display = 'none';
 }
-
 setTimeout(hidePreloader, 1000); 
-
 </script>
-{{-- end of preloader --}}
 
 <!-- ======= Header ======= -->
 @include('includes.header')
@@ -89,13 +81,13 @@ setTimeout(hidePreloader, 1000);
   setTimeout(function () {
     var alerts = document.querySelectorAll('.alert');
     alerts.forEach(function (alert) {
-      alert.classList.add('fade-out-up'); // Apply the fade-out-up animation class
+      alert.classList.add('fade-out-up');
 
       setTimeout(function () {
         alert.remove();
-      }, 1000); // Remove the alert after fading out
+      }, 1000);
     });
-  }, 2000); // Wait for 2 seconds before auto-fading
+  }, 2000);
 });
 </script>   
       <nav>
@@ -104,15 +96,13 @@ setTimeout(hidePreloader, 1000);
           <li class="breadcrumb-item active">Advisers</li>
         </ol>
       </nav>
-    </div><!-- End Page Title -->
+    </div>
     <section class="section dashboard">
       <div class="row">
         <div class="col-lg-12">
         <div class="card">
         <div class="card-body">
           <h5 class="card-title">Adviser Data</h5>
-
-          <!-- Table with hoverable rows -->
           <table class="table datatable">
             <thead>
               <tr>
@@ -143,11 +133,11 @@ setTimeout(hidePreloader, 1000);
                                 </div>
                                 <div class="modal-body">
                                     <h6 style="display: flex; align-items: center;">
-                                    <span style="margin-left: 10px; font-size: 20px;">
+                                    <span style="margin-left: 10px; font-size: 15px;">
                                           @if ($adviser->adviser->count() > 0)
                                               <ul>
                                                   @foreach ($adviser->adviser as $research)
-                                                      <li>{{pathinfo($research->filename, PATHINFO_FILENAME) }}</li>
+                                                      <li><a href="{{ asset('storage\pdf/' . $research->filename) }}">{{pathinfo($research->filename, PATHINFO_FILENAME) }}</a></li>
                                                   @endforeach
                                               </ul>
                                           @else
@@ -232,7 +222,6 @@ setTimeout(hidePreloader, 1000);
                         </div>
                     </div>
                 </form>
-
               </div>
             </td>
             </tr>
@@ -279,7 +268,6 @@ setTimeout(hidePreloader, 1000);
       </div>
     </div>
   </div>
-
   <footer id="footer" class="footer">
     <div class="copyright">
       &copy; Copyright <strong><span>PSU Library</span></strong>. All Rights Reserved
@@ -328,9 +316,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-
-
-
 </body>
-
 </html>

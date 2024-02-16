@@ -141,6 +141,9 @@ setTimeout(hidePreloader, 1000);
                         <td>{{ $file->date_published }}</td>
                         <td style="vertical-align: middle!important;text-align: center;">
                     <div style="display: inline-flex; gap: 5px; justify-content: center;">
+                      <a href="{{ asset('storage/approvalSheet/' .$file->approvalSheet) }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-text"></i>
+                    </a> 
                     <a href="#" class="btn btn-warning btn-sm edit-modal-trigger" data-file="{{ json_encode($file) }}" data-target="#editModal_{{ $file->id }}"><i class="bi bi-pencil-square"></i></a>
                         <!-- Start Edit Modal -->
                     <div class="modal fade" id="editModal_{{ $file->id }}" tabindex="-1">
@@ -227,9 +230,14 @@ setTimeout(hidePreloader, 1000);
                                   <div class="col-6">
                                     <input type="text" class="form-control" name="drive_link" value="" placeholder="Pdf Drive Link" required>
                                     </div>
-                                <div class="col-12">
-                                <input type="file" class="form-control" name="filename" value=""  accept="pdf" >
-                                </div>
+                                    <div class="col-6">
+                                      <label for="filename"> Thesis PDF file:</label>
+                                    <input type="file" class="form-control" name="filename" accept=".pdf" value="">
+                                    </div>
+                                    <div class="col-6">
+                                      <label for="approvalSheet"> Approval Sheet:</label>
+                                    <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
+                                    </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                               
@@ -429,9 +437,14 @@ setTimeout(hidePreloader, 1000);
                 <div class="col-6">
                   <input type="text" class="form-control" name="drive_link" placeholder="Pdf Drive Link" required>
                   </div>
-              <div class="col-12">
-              <input type="file" class="form-control" name="filename" value=""  accept=".pdf" >
-              </div>
+                  <div class="col-6">
+                    <label for="filename"> Thesis PDF file:</label>
+                  <input type="file" class="form-control" name="filename" accept=".pdf" value="">
+                  </div>
+                  <div class="col-6">
+                    <label for="approvalSheet"> Approval Sheet:</label>
+                  <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
+                  </div>
           <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
           <button type="submit" name="submit" class="btn btn-primary ">Update</button>

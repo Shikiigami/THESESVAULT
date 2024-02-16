@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class UserCeatController extends Controller
 {
     public function index(){
-        $perPage = 6;
+        $perPage = 12;
         $user = Auth::user();
         $userCeatfiles = research::query()
         ->join('college', 'research.college', '=', 'college.id')
@@ -61,7 +61,7 @@ class UserCeatController extends Controller
         ->first();
 
         if ($existingFile) {
-            return redirect()->back()->with('error', 'File already in Bookmarks');
+            return redirect()->back()->with('error', 'File already in Favorites');
         }  
 
         favorites::create([
@@ -69,7 +69,7 @@ class UserCeatController extends Controller
             'filename' => $research->filename,
         ]);
     
-        return redirect()->back()->with('success', 'File added to Bookmarks');
+        return redirect()->back()->with('success', 'File added to Favorites');
 
     }  
 }

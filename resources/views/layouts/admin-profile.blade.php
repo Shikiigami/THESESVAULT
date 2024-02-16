@@ -33,7 +33,6 @@
 </head>
 <body>
 
-  {{-- preloader --}}
 
   <div id="preloader">
     <div class="jumper">
@@ -53,7 +52,6 @@ function hidePreloader() {
 setTimeout(hidePreloader, 1000); 
 
 </script>
-{{-- end of preloader --}}
 
 
 
@@ -85,13 +83,13 @@ setTimeout(hidePreloader, 1000);
   setTimeout(function () {
     var alerts = document.querySelectorAll('.alert');
     alerts.forEach(function (alert) {
-      alert.classList.add('fade-out-up'); // Apply the fade-out-up animation class
+      alert.classList.add('fade-out-up');
 
       setTimeout(function () {
         alert.remove();
-      }, 1000); // Remove the alert after fading out
+      }, 1000);
     });
-  }, 2000); // Wait for 2 seconds before auto-fading
+  }, 2000);
 });
 
 </script>
@@ -104,7 +102,7 @@ setTimeout(hidePreloader, 1000);
           <li class="breadcrumb-item active">Profile</li>
         </ol>
       </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section profile">
       <div class="row">
@@ -114,7 +112,7 @@ setTimeout(hidePreloader, 1000);
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
             <img src="{{ Auth::user()->profile_picture ? asset('storage/pictures/' . Auth::user()->profile_picture) : asset('img/null-profile.png') }}" alt="Profile Picture" class="rounded-circle">
-              <h2>{{ Auth::user()->name }}</h2>
+              <h2>{{ Auth::user()->name }}</h2> <span>({{ Auth::user()->role }})</span>
               <h3>{{ Auth::user()->email }}</h3>
             </div>
           </div>
@@ -170,12 +168,8 @@ setTimeout(hidePreloader, 1000);
                     <div class="col-lg-3 col-md-4 label">Interest</div>
                     <div class="col-lg-9 col-md-8">{{ Auth::user()->interest }}</div>
                   </div>
-
                 </div>
-
   <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-
-                  <!-- Profile Edit Form -->
    <form method="POST" action="{{ route('update.profile') }}" enctype="multipart/form-data">
    @csrf
    @method('PUT')
@@ -195,7 +189,7 @@ function displaySelectedImage(input) {
 
         reader.onload = function (e) {
             preview.src = e.target.result;
-            errorMessage.style.display = 'none'; // Hide error message
+            errorMessage.style.display = 'none';
         };
 
         var validExtensions = ['jpg', 'jpeg', 'png'];
@@ -212,14 +206,12 @@ function displaySelectedImage(input) {
     }
 }
 </script>
-
             <div class="pt-2">
                 <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image" onclick="document.getElementById('profile_picture').click();"><i class="bi bi-upload"></i></a>
                 <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
             </div>
         </div>
     </div>
-
     <div class="row mb-3">
         <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
         <div class="col-md-8 col-lg-9">
@@ -258,13 +250,11 @@ function displaySelectedImage(input) {
     </div>
 <script>
     $(document).ready(function () {
-        // Make an AJAX request to fetch colleges
         $.ajax({
             url: "{{ route('edit.profile') }}",
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                // Populate the select element with fetched data
                 var select = $('#collegeSelect');
                 $.each(data, function (key, value) {
                     select.append('<option value="' + value.id + '">' + value.college_name + '</option>');
@@ -276,7 +266,6 @@ function displaySelectedImage(input) {
         });
     });
 </script>
-
     <div class="row mb-3">
         <label for="program" class="col-md-4 col-lg-3 col-form-label">Program</label>
         <div class="col-md-8 col-lg-9">
@@ -292,71 +281,54 @@ function displaySelectedImage(input) {
                     <option value="BS Electrical Engineering">BS Electrical Engineering</option>
                     <option value="BS Architecture">BS Architecture</option>
                   </select>
+              </div>
+          </div>
+        <div class="text-center">
+            <button type="submit" id="submit" name="submit" class="btn btn-primary">Save Changes</button>
         </div>
-    </div>
-
-    <div class="text-center">
-        <button type="submit" id="submit" name="submit" class="btn btn-primary">Save Changes</button>
-    </div>
-</form>
-</div>
+      </form>
+      </div>
               <div class="tab-pane fade pt-3" id="profile-change-password">
-                  <!-- Change Password Form -->
                   <form>
-
                     <div class="row mb-3">
                       <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="password" type="password" class="form-control" id="currentPassword">
                       </div>
                     </div>
-
                     <div class="row mb-3">
                       <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="newpassword" type="password" class="form-control" id="newPassword">
                       </div>
                     </div>
-
                     <div class="row mb-3">
                       <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
                       <div class="col-md-8 col-lg-9">
                         <input name="renewpassword" type="password" class="form-control" id="renewPassword">
                       </div>
                     </div>
-
                     <div class="text-center">
                       <button type="submit" class="btn btn-primary">Change Password</button>
                     </div>
-                  </form><!-- End Change Password Form -->
-
+                  </form>
                 </div>
-
-              </div><!-- End Bordered Tabs -->
-
+              </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>
-
-  </main><!-- End #main -->
-
+  </main>
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
       &copy; Copyright <strong><span>PSU Library</span></strong>. All Rights Reserved
     </div>
     <div class="credits">
-      <!-- All the links in the footer should remain intact. -->
-      <!-- You can delete the links only if you purchased the pro version. -->
-      <!-- Licensing information: https://bootstrapmade.com/license/ -->
-      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
       Designed by <a href="http://psulibrary.palawan.edu.ph/home/">Palawan State University</a>
     </div>
-  </footer><!-- End Footer -->
-  
+  </footer>
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
@@ -369,10 +341,7 @@ function displaySelectedImage(input) {
   <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
   
-
   <!-- Template Main JS File -->
   <script src="{{ asset('js/main.js') }}"></script>
-
 </body>
-
 </html>

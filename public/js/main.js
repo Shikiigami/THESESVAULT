@@ -360,7 +360,109 @@
         if (query === '') {
             dropdown.hide();
         }
-    });
+    }); 
+}); 
+
+//clipboard
+document.addEventListener('DOMContentLoaded', function () {
+  var clipboardIcons = document.querySelectorAll('.modal .clipboardIcon');
+  
+  clipboardIcons.forEach(function (clipboardIcon) {
+      clipboardIcon.addEventListener('click', function () {
+          var modal = clipboardIcon.closest('.modal');
+          var citationCode = modal.querySelector('.citationCode');
+          var range = document.createRange();
+          range.selectNode(citationCode);
+          window.getSelection().removeAllRanges();
+          window.getSelection().addRange(range);
+          document.execCommand('copy');
+          window.getSelection().removeAllRanges();
+          alert('Copied to clipboard!');
+      });
+  });
 });
 
-                
+var months = [
+    'January', 'February', 'March', 'April',
+    'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'
+];
+
+var ctx = document.getElementById('researchByMonth').getContext('2d');
+var chart;
+
+$(document).ready(function () {
+    loadData();
+    $('#year').change(function () {
+        loadData();
+    });
+
+    function loadData() {
+        var selectedYear = $('#year').val();
+        $.ajax({
+            type: 'GET',
+            url: '/load-data/' + selectedYear,
+            success: function (data) {
+                console.log('Received data:', data);
+                var availableMonths = data.month_chart.map(month => months[month - 1]);
+                console.log('Available months:', availableMonths);
+                updateChart(availableMonths, data.count_research);
+                updateSelectedInfo(selectedYear);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading data:', error);
+            }
+        });
+    }
+
+    function updateChart(month_chart, count_research) {
+        console.log('Updating chart with data:', month_chart, count_research);
+
+        if (chart) {
+            chart.destroy(); 
+        }
+
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: month_chart,
+                datasets: [{
+                    label: 'No. Research',
+                    data: count_research,
+                    fill: false,
+                    backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(255, 159, 64, 0.2)',
+                      'rgba(255, 205, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(201, 203, 207, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgb(255, 99, 132)',
+                      'rgb(255, 159, 64)',
+                      'rgb(255, 205, 86)',
+                      'rgb(75, 192, 192)',
+                      'rgb(54, 162, 235)',
+                      'rgb(153, 102, 255)',
+                      'rgb(201, 203, 207)'
+                  ],
+                  borderWidth: 2,
+                  tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function updateSelectedInfo(selectedYear) {
+        $('#selectedInfo').text('Selected Year: ' + selectedYear);
+    }
+});

@@ -135,7 +135,7 @@ setTimeout(hidePreloader, 1000);
                     @if(isset($logs) && count($logs) > 0)
                     @foreach ($logs as $log)
                         <tr>
-                            <td scope="row">{{ $log->admin->name }}</td>
+                          <td scope="row">{{ $log->admin->name }}</td>
                             <td scope="row">{{ $log->admin_action }}</td>
                             <td scope="row">{{ $log->research}}</td>
                             <td scope="row">{{ \Carbon\Carbon::parse($log->action_date)->format('F j, Y  H:i:s') }}</td>
@@ -204,10 +204,6 @@ setTimeout(hidePreloader, 1000);
       &copy; Copyright <strong><span>PSU Library</span></strong>. All Rights Reserved
     </div>
     <div class="credits">
-      <!-- All the links in the footer should remain intact. -->
-      <!-- You can delete the links only if you purchased the pro version. -->
-      <!-- Licensing information: https://bootstrapmade.com/license/ -->
-      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
       Designed by <a href="http://psulibrary.palawan.edu.ph/home/">Palawan State University</a>
     </div>
   </footer><!-- End Footer -->

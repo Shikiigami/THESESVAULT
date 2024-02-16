@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -22,11 +22,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-  
       <!-- Favicons -->
     <link href="{{ asset ('img/rchive.png') }}" rel="icon">
     <link href="{{ asset ('img/apple-touch-icon.png') }}" rel="apple-touch-icon">
-  
     <link href="{{ asset ('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
     <link href="{{ asset ('vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
@@ -34,8 +32,6 @@
     <link href="{{ asset('vendor/quill/quill.bubble.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet">
     <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet">
-  
-  
     <link href="{{ asset('css/auth.css') }}"  rel="stylesheet">
     <link href="{{ asset('css/newlogin.css') }}"  rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
@@ -91,16 +87,13 @@
             <select class="input" id="Program" name="program" aria-label=".form-select-sm example" value="{{ old('program') }}" required>
               <option disabled selected>Choose Program</option>
           </select>
-          
           <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
           <script>
               $(document).ready(function() {
                   $('#college').change(function() {
                       var selectedCollege = $(this).val();
                       var programSelect = $('#Program');
-        
                       programSelect.find('option').not(':first').remove();
-          
                       if (selectedCollege === '131') {
                           addProgramOptions(programSelect, [
                               "BS Information Technology",
@@ -110,7 +103,6 @@
                               "BS Marine Biology"
                           ]);
                       } else if (selectedCollege === '130') {
-                          // College 130 - Add BS Civil Engineering to BS Architecture
                           addProgramOptions(programSelect, [
                               "BS Civil Engineering",
                               "BS Mechanical Engineering",
@@ -120,8 +112,6 @@
                           ]);
                       }
                   });
-          
-                  // Function to add options to the program select
                   function addProgramOptions(selectElement, programs) {
                       programs.forEach(function(program) {
                           selectElement.append($('<option>', {
@@ -211,14 +201,11 @@
                 </label>
               </p>
          <script>
-          
                 const modal = document.getElementById('myModal');
                 const checkbox = document.getElementById('invalidCheck2');
                 const termsLink = document.getElementById('termsLink');
                 const confirmAgreeBtn = document.getElementById('confirmAgreeBtn');
                 const closeButton = document.querySelector('.close'); // Get the close button
-
-        
                 function showModal() {
                   modal.style.display = 'block';
                 }
@@ -229,17 +216,13 @@
                   event.preventDefault();
                   showModal();
                 });
-
                 confirmAgreeBtn.addEventListener('click', () => {
                   checkbox.checked = true;
                   hideModal(); 
                 });
-
                 closeButton.addEventListener('click', hideModal);
-
          </script>
-                <button type="submit" class="form-btn">{{ __('Register') }}</button>
-                
+                <button type="submit" class="form-btn">{{ __('Register') }}</button> 
               </form>
               <p class="sign-up-label">
                 Don't have an account?<a class="sign-up-link" style="text-decoration: none; color: rgb(64, 105, 227)" href="{{ route('login') }}"> <span>Login here</span></a>
@@ -271,7 +254,6 @@
           this.classList.toggle('fa-eye-slash');
         });
       </script>
-
     <script>
       const togglePasswordConfirm = document.querySelector('#togglePasswordConfirm');
       const passwordConfirm = document.querySelector('#password-confirm');
@@ -282,7 +264,5 @@
           this.classList.toggle('fa-eye-slash');
       });
     </script>
-          
-
 </body>
 </html>

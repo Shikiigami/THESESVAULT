@@ -120,7 +120,6 @@ setTimeout(hidePreloader, 1000);
           <div class="row">
 
             <!-- Sales Card -->
-            @if (auth()->user()->role === 'admin')
             <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card">
 
@@ -145,7 +144,6 @@ setTimeout(hidePreloader, 1000);
 
               </div>
             </div><!-- End Sales Card -->
-            @endif
             <!-- Revenue Card -->
             
             <div class="col-xxl-4 col-md-6">
@@ -172,7 +170,6 @@ setTimeout(hidePreloader, 1000);
               </div>
             </div><!-- End Revenue Card -->
             <!-- Customers Card -->
-            @if (auth()->user()->role === 'admin')
             <div class="col-xxl-4 col-xl-12">
 
               <div class="card info-card customers-card">
@@ -192,9 +189,7 @@ setTimeout(hidePreloader, 1000);
 
                 </div>
               </div>
-
         </div><!-- End Customers Card -->
-        @endif
     @if(auth()->user()->role === 'user')
     <div class="col-lg-12">
       <div class="card info-card revenue-card">
@@ -216,7 +211,17 @@ setTimeout(hidePreloader, 1000);
                 <div class="research-content">
                     @foreach ($researchData as $research)
                         <div class="research-item" style="display: none;">
-                            <a href="{{ route('get.view', ['filename' => $research->filename]) }}" class="research-paper"><h6>{{ $research->filename }}</h6></a>
+                            <a href="{{ route('get.view', ['filename' => $research->filename]) }}" class="research-paper"><h6> 
+                                <?php
+                                $filename = pathinfo($research->filename, PATHINFO_FILENAME);
+                                if (strlen($filename) > 42) {
+                                    $truncatedFilename = substr($filename, 0, 42) . '...';
+                                    echo htmlspecialchars($truncatedFilename);
+                                } else {
+                                    echo htmlspecialchars($filename);
+                                }
+                                ?>                 
+                            </h6></a>
                             <span class="text-success small pt-1 fw-bold" id="callno">{{ $research->callno }}</span>
                             <span class="text-muted small pt-2 ps-1">Its for you</span>
                         </div>
@@ -247,7 +252,7 @@ setTimeout(hidePreloader, 1000);
 
         // Start the animation
         $(researchItems[currentIndex]).fadeIn(1000);
-        setInterval(showNextResearchItem, 3000); // Change the interval as needed (in milliseconds)
+        setInterval(showNextResearchItem, 5000); // Change the interval as needed (in milliseconds)
     });
 </script>
       </div>
@@ -269,139 +274,158 @@ setTimeout(hidePreloader, 1000);
         </div>
         <div class="ps-3">
                 <div class="research-content">
-                       @foreach ($topFrequentItemsets as $filename)
-                        <div class="frequent-item" style="display: none;">
-                            <a href="{{ route('get.view', ['filename' => $filename]) }}" class="research-paper"><h6>{{ $filename  }}</h6></a>
-                            <span class="text-success small pt-1 fw-bold" id="callno">Let's View</span>
-                            <span class="text-muted small pt-2 ps-1">Its for you</span>
-                        </div>
-                    @endforeach
-                </div>
+                 
+                  @foreach ($topFrequentItemsets as $filename)
+                  <div class="frequent-item" style="display: none;">
+                      <a href="{{ route('get.view', ['filename' => $filename]) }}" class="research-paper">
+                          <h6>
+                              <?php
+                              $filenameWithoutExtension = pathinfo($filename, PATHINFO_FILENAME);
+                              if (strlen($filenameWithoutExtension) > 42) {
+                                  $truncatedFilename = substr($filenameWithoutExtension, 0, 42) . '...';
+                                  echo htmlspecialchars($truncatedFilename);
+                              } else {
+                                  echo htmlspecialchars($filenameWithoutExtension);
+                              }
+                              ?>
+                          </h6>
+                      </a>
+                      <span class="text-success small pt-1 fw-bold" id="callno">Let's View</span>
+                      <span class="text-muted small pt-2 ps-1">Its for you</span>
+                  </div>
+              @endforeach
+              
+              </div>
         </div>
     </div> 
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const frequentItems = document.querySelectorAll('.frequent-item');
-        let currentIndex = 0;
+   document.addEventListener("DOMContentLoaded", () => {
+    const frequentItems = document.querySelectorAll('.frequent-item');
+    let currentIndex = 0;
+    let intervalId;
 
-        function showNextResearchItem() {
-            const currentItem = frequentItems[currentIndex];
-            const nextIndex = (currentIndex + 1) % frequentItems.length;
-            const nextItem = frequentItems[nextIndex];
+    function showNextResearchItem() {
+        const currentItem = frequentItems[currentIndex];
+        const nextIndex = (currentIndex + 1) % frequentItems.length;
+        const nextItem = frequentItems[nextIndex];
 
-            $(currentItem).fadeOut(1000, () => {
-                $(nextItem).fadeIn(1000);
-            });
+        $(currentItem).fadeOut(1000, () => {
+            $(nextItem).fadeIn(1000);
+        });
 
-            currentIndex = nextIndex;
-        }
+        currentIndex = nextIndex;
+    }
 
-        // Start the animation
+    function startAnimation() {
         $(frequentItems[currentIndex]).fadeIn(1000);
-        setInterval(showNextResearchItem, 3000); // Change the interval as needed (in milliseconds)
+        intervalId = setInterval(showNextResearchItem, 5000);
+    }
+
+    // Start the animation
+    startAnimation();
+
+    // Click event to restart animation
+    frequentItems.forEach(item => {
+        item.addEventListener('click', () => {
+            clearInterval(intervalId);
+            currentIndex = 0;
+            startAnimation();
+        });
     });
+});
+
 </script>
       </div>
         </div>
         @endif
-          <div class="col-lg-12">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Most viewed Theses in your College</h5>   
-              <!-- Bar Chart -->
-              <canvas id="barChart" style="max-height: 250px;"></canvas>
-              <script>
-              var labelChart = JSON.parse('<?php echo json_encode($label_chart); ?>');
-              var countUser = JSON.parse('<?php echo json_encode($count_user); ?>');
-  
-                  document.addEventListener("DOMContentLoaded", () => {
-                      new Chart(document.querySelector('#barChart'), {
-                          type: 'bar',
-                          data: {
-                              labels: labelChart,
-                              datasets: [{
-                                  label: 'Top views',
-                                  data: countUser,
-                                  backgroundColor: [
-                                      'rgba(255, 99, 132, 0.2)',
-                                      'rgba(255, 159, 64, 0.2)',
-                                      'rgba(255, 205, 86, 0.2)',
-                                      'rgba(75, 192, 192, 0.2)',
-                                      'rgba(54, 162, 235, 0.2)',
-                                      'rgba(153, 102, 255, 0.2)',
-                                      'rgba(201, 203, 207, 0.2)'
-                                  ],
-                                  borderColor: [
-                                      'rgb(255, 99, 132)',
-                                      'rgb(255, 159, 64)',
-                                      'rgb(255, 205, 86)',
-                                      'rgb(75, 192, 192)',
-                                      'rgb(54, 162, 235)',
-                                      'rgb(153, 102, 255)',
-                                      'rgb(201, 203, 207)'
-                                  ],
-                                  borderWidth: 1
-                              }]
-                          },
-                          options: {
-                              scales: {
-                                  x: {
-                                      display: false,
-                                  },
-                                  y: {
-                                      beginAtZero: true
-                                  }
-                              }
-                          }
-                      });
-                  });
-              </script>
-              <!-- End Bar CHart -->
+        @if(auth()->user()->role === 'user')
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Most viewed Theses in your College</h5>
+                    <!-- Bar Chart -->
+                    <canvas id="barChart" style="max-height: 250px;"></canvas>
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script>
+                        var labelChart = JSON.parse('<?php echo json_encode($label_chart, JSON_HEX_QUOT | JSON_HEX_APOS); ?>');
+                        var countUser = JSON.parse('<?php echo json_encode($count_user, JSON_HEX_QUOT | JSON_HEX_APOS); ?>');
 
+    
+                        document.addEventListener("DOMContentLoaded", () => {
+                            new Chart(document.querySelector('#barChart'), {
+                                type: 'bar',
+                                data: {
+                                    labels: labelChart,
+                                    datasets: [{
+                                        label: 'Top views',
+                                        data: countUser,
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 159, 64, 0.2)',
+                                            'rgba(255, 205, 86, 0.2)',
+                                            'rgba(75, 192, 192, 0.2)',
+                                            'rgba(54, 162, 235, 0.2)',
+                                            'rgba(153, 102, 255, 0.2)',
+                                            'rgba(201, 203, 207, 0.2)'
+                                        ],
+                                        borderColor: [
+                                            'rgb(255, 99, 132)',
+                                            'rgb(255, 159, 64)',
+                                            'rgb(255, 205, 86)',
+                                            'rgb(75, 192, 192)',
+                                            'rgb(54, 162, 235)',
+                                            'rgb(153, 102, 255)',
+                                            'rgb(201, 203, 207)'
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        x: {
+                                            display: false,
+                                        },
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    </script>
+                    <!-- End Bar Chart -->
+                </div>
             </div>
           </div>
-        </div>
-
-            {{-- <div class="col-lg-12">
+    @endif
+          <div class="col-lg-12">
+              <!-- Your HTML/Blade code -->
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">Research added by Month</h5>
-    
-                  <!-- Line Chart -->
-                  <canvas id="researchByMonth" style="max-height: 300px;"></canvas>
-                  <script>
-                    var month_chart = JSON.parse('<?php echo json_encode($month_chart); ?>');
-                    var count_research = JSON.parse('<?php echo json_encode($count_myresearch); ?>');
-                    document.addEventListener("DOMContentLoaded", () => {
-                      new Chart(document.querySelector('#researchByMonth'), {
-                        type: 'line',
-                        data: {
-                          labels: month_chart,
-                          datasets: [{
-                            label: 'No. Research',
-                            data: count_research,
-                            fill: false,
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.1
-                          }]
-                        },
-                        options: {
-                          scales: {
-                            y: {
-                              beginAtZero: true
-                            }
-                          }
-                        }
-                      });
-                    });
-                  </script>
-                  <!-- End Line CHart -->
-    
+                    <div class="col-md-12">
+                        <div class="d-flex align-items-center">
+                            <h5 class="card-title mb-0 mr-3">PalSU Research Analytics</h5>
+                            <div class="ml-auto mx-3 mx-md-5">
+                                <select name="year" class="form-control" id="year">
+                                    <option selected disabled value="2023">Select Year</option>
+                                    @foreach($distinctYears as $yr)
+                                        <option value="{{ $yr }}">{{ $yr }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+            
+                        <!-- Line Chart -->
+                        <canvas id="researchByMonth" style="max-height: 300px;"></canvas>
+                    </div>
+                    <p id="selectedInfo"></p>
                 </div>
-              </div>
-            </div> --}}
+            </div>
+           
+            </div>
+          
             @if(auth()->user()->role === 'user')
             <div class="col-lg-6">
               <div class="card">
@@ -516,8 +540,8 @@ setTimeout(hidePreloader, 1000);
     <div id="pieChart" style="min-height: 350px;" class="echart"></div>
     @if(auth()->user()->role === 'admin')
       <div class="d-flex justify-content-center">
-          {{-- <a class="btn btn-success btn-sm" style="margin-right: 5px;" href="{{ route('generate.Piepdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a> --}}
-          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateProgram"><i class="bi bi-calendar-check"></i> Generate Report</button>
+          <a class="btn btn-success btn-sm" style="margin-right: 5px;" href="{{ route('generate.Piepdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a>
+          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateProgram"><i class="bi bi-printer"></i> Report by Date</button>
       </div>
   @endif
 
@@ -599,11 +623,11 @@ setTimeout(hidePreloader, 1000);
 
             <div class="card-body pb-0">
               <h5 class="card-title">Number of Theses by College <span>| Present</span></h5>
-              <div id="trafficChart" style="min-height: 560px;" class="echart"></div>
+              <div id="trafficChart" style="min-height: 300px;" class="echart"></div>
               @if(auth()->user()->role === 'admin')
                 <div class="d-flex justify-content-center">
-                    {{-- <a class="btn btn-success btn-sm" style="margin-right: 5px;"  href="{{ route('generate.pdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a> --}}
-                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateCollege"><i class="bi bi-calendar-check"></i> Generate Report</button>
+                    <a class="btn btn-success btn-sm" style="margin-right: 5px;"  href="{{ route('generate.pdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a>
+                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateCollege"><i class="bi bi-printer"></i> Report by Date</button>
                 </div>
             @endif
               <h5 class="card-title"></h5>
@@ -717,55 +741,6 @@ setTimeout(hidePreloader, 1000);
     </section>
 
   </main><!-- End #main -->
-  <div class="modal fade" id="verticalycentered" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Sean Harvey, Orga</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Pwede po ba ma'am pa approve?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div><!-- End Vertically centered Modal-->
-  <div class="modal fade" id="verticalycentered2" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Maurene, Llado</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Pa approve po ma'am need po for research! Thank you po</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div><!-- End Vertically centered Modal-->
-  <div class="modal fade" id="verticalycentered3" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Dorero, Charles Jazon</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Pa approved po admin for further research development</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div><!-- End Vertically centered Modal-->
-
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
@@ -792,6 +767,9 @@ setTimeout(hidePreloader, 1000);
   <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
   <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Template Main JS File -->
   <script src="{{ asset('js/main.js') }}"></script>

@@ -47,16 +47,19 @@ $results = DB::select($query, ['user_college_id' => $userCollegeId]);
 $count_user = [];
 $label_chart = [];
 
+
 foreach ($results as $row) {
     $count_user[] = $row->{'User Count'};
     $label_chart[] = str_replace('.pdf', '', $row->{'File Name'});
+
+
 }
 
-        $myquery = "SELECT college.college_name as 'myCollege Name', COUNT(DISTINCT research.id) as 'myTotal Count'
-        FROM research
-        INNER JOIN college ON college.id = research.college
-        GROUP BY college.college_name, research.college
-        ORDER BY `myTotal Count` DESC";
+$myquery = "SELECT college.college_name as 'myCollege Name', COUNT(DISTINCT research.id) as 'myTotal Count'
+FROM research
+INNER JOIN college ON college.id = research.college
+GROUP BY college.college_name, research.college
+ORDER BY `myTotal Count` DESC";
         
 $myresults = DB::select($myquery);
 
@@ -109,13 +112,13 @@ $researchData = research::where('fieldname', $fieldName)
                         ->select('filename','callno')
                         ->get();
 
-$interestQuery = "SELECT interest FROM users GROUP BY interest ORDER BY COUNT(DISTINCT users.id) DESC LIMIT 1";
+$interestQuery = "SELECT interest FROM users WHERE interest IS NOT NULL GROUP BY interest ORDER BY COUNT(DISTINCT users.id) DESC LIMIT 1";
 $percentageQuery = "SELECT
 (COUNT(*) / (SELECT COUNT(*) FROM users)) * 100 AS highest_percentage
 FROM users
 WHERE interest = (
 SELECT interest
-FROM users
+FROM users Where Interest is not null
 GROUP BY interest
 ORDER BY COUNT(*) DESC
 LIMIT 1
@@ -135,9 +138,9 @@ function calculateSupport($researchItem){
         ->count();
 }
     $minSupportThreshold = 5;
-    $researchItems = research::all();
+    $researchItems = research::with('views')->select('id', 'filename')->get();
     $supportData = [];
-
+    
     foreach ($researchItems as $researchItem) {
         $support = calculateSupport($researchItem); // Implement this function
         if ($support >= $minSupportThreshold) {
@@ -146,35 +149,18 @@ function calculateSupport($researchItem){
     }
     // Sort the support data by support value (descending)
     arsort($supportData);
-
-    // Get the most-viewed research items as frequent itemsets
     $mostViewedResearchItems = array_keys($supportData);
-
-    // Limit to the top 5 frequent itemsets
     $topFrequentItemsets = array_slice($mostViewedResearchItems, 0, 5);
-
+    
     // Retrieve the filenames of the top frequent itemsets from the database
     $filenames = research::whereIn('id', $topFrequentItemsets)->pluck('filename');
+    $distinctYears = Research::selectRaw('YEAR(date_published) as research_year')
+    ->distinct()
+    ->orderByDesc('research_year')
+    ->pluck('research_year');
 
-    $mquery = DB::table('research')
-            ->select(DB::raw('MONTH(research.created_at) as Months'), DB::raw('COUNT(DISTINCT id) as TotalResearch'))
-            ->groupBy(DB::raw('MONTH(research.created_at)'))
-            ->orderBy(DB::raw('MONTH(research.created_at)'))
-            ->get();
-$count_myresearch = [];
-$month_chart = [];
-
-if ($mquery->count() > 0) {
-    foreach ($mquery as $rowm) {
-        $count_myresearch[] = $rowm->TotalResearch;
-        $month_chart[] = date("F", mktime(0, 0, 0, $rowm->Months, 1));
-    }
-} else {
-    echo "No records matching your query were found.";
-}
-
-    return view('layouts.index', compact('files', 'userCount', 'filesCount', 'count_user', 'label_chart', 'count_mycollege', 'lab_mychart', 'count_research','label_program','interest','percentage', 'count_myresearch', 'month_chart') + 
-    ['researchData' => $researchData] + ['percentageResult' => $percentageResult] + ['topFrequentItemsets'=>$filenames]);
+    return view('layouts.index', compact('files', 'userCount', 'filesCount', 'count_user', 'label_chart', 'count_mycollege', 'lab_mychart', 'count_research','label_program','interest','percentage',) + 
+    ['researchData' => $researchData] + ['percentageResult' => $percentageResult] + ['topFrequentItemsets'=>$filenames] + ['distinctYears' => $distinctYears]);
 
     }      
     private function formatTimeDifference($timeDifference)
@@ -192,6 +178,38 @@ if ($mquery->count() > 0) {
         }
 }
 
+public function loadData(Request $request, $year)
+{
+    $mquery = DB::table('research')
+        ->select(DB::raw('MONTH(research.date_published) as Months'), DB::raw('COUNT(DISTINCT id) as TotalResearch'))
+        ->whereYear('research.date_published', $year)
+        ->groupBy(DB::raw('MONTH(research.date_published)'))
+        ->orderBy(DB::raw('MONTH(research.date_published)'))
+        ->get();
+
+    $count_myresearch = [];
+    $month_chart = [];
+
+    if ($mquery->count() > 0) {
+        foreach ($mquery as $rowm) {
+            $count_myresearch[] = $rowm->TotalResearch;
+            $month_chart[] = $rowm->Months;
+        }
+    }
+    logger()->info('Fetched data:', ['year' => $year, 'month_chart' => $month_chart, 'count_myresearch' => $count_myresearch]);
+
+    if ($request->ajax()) {
+        return response()->json(['month_chart' => $month_chart, 'count_research' => $count_myresearch]);
+    } else {
+        $month_chart = array_map(function ($numericMonth) {
+            return date("F", mktime(0, 0, 0, $numericMonth, 1));
+        }, $month_chart);
+
+        logger()->info('Converted data:', ['year' => $year, 'month_chart' => $month_chart, 'count_myresearch' => $count_myresearch]);
+
+        return view('layouts.index', ['month_chart' => $month_chart, 'count_research' => $count_myresearch]);
+    }
+}
 
 
 }

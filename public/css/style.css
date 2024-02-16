@@ -1268,11 +1268,17 @@ h6 {
 .login{
   background-color: white;
   height: 555px;
-  width: 400px; /* Set the width of the rectangle */
+  width: 400px; 
   padding: 50px;
-  position: fixed; /* Position the rectangle relative to the viewport */
-  top: 50%; /* Position the top of the rectangle halfway down the viewport */
-  right: 0; /* Position the right edge of the rectangle against the right edge of the viewport */
-  transform: translateY(-50%); /* Center the rectangle vertically */
+  position: fixed;
+  top: 50%; 
+  right: 0; 
+  transform: translateY(-50%); 
+}
+.clipboardIcon {
+  transition: transform 0.3s ease-in-out;
 }
 
+.clipboardIcon:hover {
+  transform: scale(1.2);
+}

@@ -12,7 +12,7 @@ class CsController extends Controller
 {
     public function index(){
 
-        $perPage = 3;
+        $perPage = 10;
         $csfiles = research::query()
         ->join('college', 'research.college', '=', 'college.id')
         ->join('adviser', 'research.adviser', '=', 'adviser.adviser_name')

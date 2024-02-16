@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class UserCsController extends Controller
 {
     public function index(){
-        $perPage = 6;
+        $perPage = 12;
         $user = Auth::user();
         $userCsfiles = research::query()
         ->join('college', 'research.college', '=', 'college.id')
@@ -60,7 +60,7 @@ class UserCsController extends Controller
         ->first();
 
         if ($existingFile) {
-            return redirect()->back()->with('error', 'File already in Bookmarks');
+            return redirect()->back()->with('error', 'File already in Favorites');
         }  
 
         favorites::create([
@@ -68,7 +68,7 @@ class UserCsController extends Controller
             'filename' => $research->filename,
         ]);
     
-        return redirect()->back()->with('success', 'File added to Bookmarks');
+        return redirect()->back()->with('success', 'File added to Favorites');
 
     }
 }

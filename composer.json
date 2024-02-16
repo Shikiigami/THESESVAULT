@@ -7,18 +7,22 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.0",
-        "google/apiclient": "2.15.0",
-        "guzzlehttp/guzzle": "^7.7",
+        "fnsc/laravel-google-drive": "^1.2",
+        "google/apiclient": "2.15.1",
+        "guzzlehttp/guzzle": "^7.8",
         "intervention/image": "^2.7",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.9",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
+        "masbug/flysystem-google-drive-ext": "^2.3",
         "nyholm/psr7": "^1.8",
         "php-http/guzzle7-adapter": "^1.0",
         "railsware/mailtrap-php": "^1.7",
-        "symfony/http-client": "^6.3"
+        "spatie/laravel-backup": "^8.5",
+        "symfony/http-client": "^6.3",
+        "yaza/laravel-google-drive-storage": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -33,7 +37,8 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Masbug\\Flysystem\\GoogleDrive\\": "vendor/masbug/flysystem-google-drive-ext/src"
         }
     },
     "autoload-dev": {

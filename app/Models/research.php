@@ -9,7 +9,7 @@ class research extends Model
 {
     protected $table = 'research'; 
     protected $primaryKey = 'id';
-    protected $fillable = ['callno','filename','author','college','adviser','date_published','fieldname','campus','citation','drive_link'];
+    protected $fillable = ['callno','filename','author','college','adviser','date_published','fieldname','campus','citation','drive_link','approvalSheet'];
 
     public function college()
     {
@@ -32,13 +32,14 @@ class research extends Model
     {
         return $this->belongsTo(Adviser::class, 'adviser', 'adviser_name');
     }
-    public function dl_filename()
-    {
-        return $this->hasMany(Download::class, 'filename', 'dl_filename');
-    }
 
     public function research_college()
     {
         return $this->hasMany(View::class, 'research_college', 'college');
     }
+    public function views()
+{
+    return $this->hasMany(View::class, 'filename', 'filename');
+}
+
 }

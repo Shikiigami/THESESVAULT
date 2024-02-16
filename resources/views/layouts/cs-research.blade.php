@@ -34,8 +34,6 @@
 
 <body>
 
-  {{-- preloader --}}
-
   <div id="preloader">
     <div class="jumper">
         <div></div>
@@ -44,7 +42,7 @@
     </div>
 </div>
 <script>
-  // Get the preloader element
+
 const preloader = document.getElementById('preloader');
 
 function hidePreloader() {
@@ -54,7 +52,6 @@ function hidePreloader() {
 setTimeout(hidePreloader, 1000); 
 
 </script>
-{{-- end of preloader --}}
 
   <!-- ======= Header ======= -->
   @include('includes.header')
@@ -62,7 +59,6 @@ setTimeout(hidePreloader, 1000);
   <!-- ======= Sidebar ======= -->
   @include('includes.aside')
 
-  
   <main id="main" class="main">
 
     <div class="pagetitle">
@@ -90,13 +86,13 @@ setTimeout(hidePreloader, 1000);
   setTimeout(function () {
     var alerts = document.querySelectorAll('.alert');
     alerts.forEach(function (alert) {
-      alert.classList.add('fade-out-up'); // Apply the fade-out-up animation class
+      alert.classList.add('fade-out-up');
 
       setTimeout(function () {
         alert.remove();
-      }, 1000); // Remove the alert after fading out
+      }, 1000);
     });
-  }, 2000); // Wait for 2 seconds before auto-fading
+  }, 2000);
 });
 
 </script>
@@ -140,6 +136,9 @@ setTimeout(hidePreloader, 1000);
                         <td>{{ $file->date_published }}</td>
                         <td style="vertical-align: middle!important;text-align: center;">
                     <div style="display: inline-flex; gap: 5px; justify-content: center;">
+                      <a href="{{ asset('storage/approvalSheet/' .$file->approvalSheet) }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-text"></i>
+                    </a> 
                     <a href="#" class="btn btn-warning btn-sm edit-modal-trigger" data-file="{{ json_encode($file) }}" data-target="#editModal_{{ $file->id }}"><i class="bi bi-pencil-square"></i></a>
                         <!-- Start Edit Modal -->
                     <div class="modal fade" id="editModal_{{ $file->id }}" tabindex="-1">
@@ -226,9 +225,14 @@ setTimeout(hidePreloader, 1000);
                                   <div class="col-6">
                                     <input type="text" class="form-control" name="drive_link" value="" placeholder="Pdf Drive Link" required>
                                     </div>
-                                <div class="col-12">
-                                <input type="file" class="form-control" name="filename" value=""  accept="pdf" >
-                                </div>
+                                    <div class="col-6">
+                                      <label for="filename"> Thesis PDF file:</label>
+                                    <input type="file" class="form-control" name="filename" accept=".pdf" value="">
+                                    </div>
+                                    <div class="col-6">
+                                      <label for="approvalSheet"> Approval Sheet:</label>
+                                    <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
+                                    </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                               
@@ -364,9 +368,14 @@ setTimeout(hidePreloader, 1000);
                 <div class="col-6">
                   <input type="text" class="form-control" name="drive_link" placeholder="Pdf Drive Link" required>
                   </div>
-              <div class="col-12">
-              <input type="file" class="form-control" name="filename" accept=".pdf" required>
-              </div>
+                  <div class="col-6">
+                    <label for="filename"> Thesis PDF file:</label>
+                  <input type="file" class="form-control" name="filename" accept=".pdf" value="">
+                  </div>
+                  <div class="col-6">
+                    <label for="approvalSheet"> Approval Sheet:</label>
+                  <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
+                  </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
             <button type="submit" name="submit" class="btn btn-primary "> Upload</button>

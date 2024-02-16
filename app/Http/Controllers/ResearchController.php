@@ -13,14 +13,17 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\PDF;
 use Carbon\Carbon;
+use Yaza\LaravelGoogleDriveStorage\Gdrive;
+use Google\Service\Drive;
+
+
 
 
 class ResearchController extends Controller
 {
     public function index()
     {
-        $files = research::select('id','callno', 'filename', 'author','program','date_published', 'college', 'adviser','fieldname','campus','citation','drive_link')
-        ->orderBy('filename', 'ASC')->paginate();
+        $files = research::orderBy('filename', 'ASC')->get();
         $colleges = college::all(); 
         $advisers = Adviser::orderBy('adviser_name', 'asc')->get();
         return view('layouts.research-all', compact('files', 'colleges','advisers'));
@@ -42,7 +45,7 @@ class ResearchController extends Controller
         $query = research::query()
             ->join('college', 'research.college', '=', 'college.id')
             ->select('research.*', 'college.college_name')
-            ->orderBy('research.filename', 'ASC'); // Specify 'research.filename' to avoid ambiguity
+            ->orderBy('research.filename', 'ASC'); 
     
         if (strlen($searchQuery) > 0) {
             $query->where(function ($q) use ($searchQuery) {
@@ -67,7 +70,6 @@ class ResearchController extends Controller
         return view('layouts.research-all', compact('files', 'colleges', 'userResearch','advisers'));
     }
     
-
     public function edit(string $id)
     {
         $file = research::findOrFail($id); 
@@ -81,7 +83,6 @@ class ResearchController extends Controller
     $colleges = college::all(); 
     return view('layouts.research-all', compact('colleges'));
 }
-
 public function store(Request $request)
 
 {
@@ -95,7 +96,9 @@ public function store(Request $request)
         'adviser' => 'required|string',
         'fieldname' => 'required|in:Business,Technology,Education',
         'campus' => 'required|in:Main Campus,Araceli,Balabac,Bataraza,"Brooke\'s Point",Coron,Cuyo,Dumaran,El Nido,Linapacan,Narra,Quezon,Rizal,Roxas,San Rafael,San Vicente,Sofronio Española,Taytay',
-        'citation'=>'required|string',
+        'citation' => 'nullable|string',
+        'drive_link' => 'nullable|string',
+        'approvalSheet' => 'required|mimes:pdf',
     ]);
 
     if ($validator->fails()) {
@@ -105,6 +108,8 @@ public function store(Request $request)
     $uploadedFile = $request->file('filename');
     $filename = $uploadedFile->getClientOriginalName();
     $ext = $uploadedFile->getClientOriginalExtension();
+    $approvalSheetFile = $request->file('approvalSheet');
+    $approvalSheet = $approvalSheetFile->getClientOriginalName();
 
     if ($ext === 'pdf') {
         // Check if a file with the same filename already exists in the database
@@ -122,7 +127,16 @@ public function store(Request $request)
             $citation = null;
         }
 
-        // Save input data to the database
+        $folderId = 'ThesesVault';
+
+            $googleDrive = Storage::disk('google');
+            if (!$googleDrive->has($folderId)) {
+                $this->createFolderOnGoogleDrive($folderId);
+            }
+
+            $googleDrivePath = $folderId . '/' . $filename;
+            $googleDrive->put($googleDrivePath, file_get_contents($uploadedFile));
+
         $file = new research();
         $file->callno = $request->input('callno');
         $file->filename = $filename;
@@ -134,10 +148,11 @@ public function store(Request $request)
         $file->fieldname = $request->input('fieldname');
         $file->campus = $request->input('campus');
         $file->citation = $request->input('citation');
-        $file->drive_link = $request->input('drive_link');
+        $file->approvalSheet = $approvalSheet;
 
         // Move the uploaded file to the public/pdf directory
         $uploadedFile->move('storage/pdf', $filename);
+        $approvalSheetFile->move('storage/approvalSheet', $approvalSheet);
         $userAction = 'Upload'; 
             AuditLog::create([
                 'adminId' => auth()->user()->id, 
@@ -156,11 +171,8 @@ public function store(Request $request)
         return redirect()->back()->with('error', 'Please upload a valid PDF file.');
     }
 }
-
     public function update(Request $request, string $id)
     {
-
-        
         $file = research::findOrFail($id); 
 
         $existingFile = research::where('callno', $request->input('callno'))
@@ -170,7 +182,6 @@ public function store(Request $request)
         if ($existingFile) {
         return redirect()->back()->with('error', 'Callno already exists!');
 }
-        
         if ($request->hasFile('filename')) {
             $uploadedFile = $request->file('filename');
             $newFilename = $uploadedFile->getClientOriginalName();
@@ -180,16 +191,28 @@ public function store(Request $request)
             if ($existingFile) {
                 return redirect()->back()->with('error', 'File already exist!');
             }
-            // Delete old file if exists
             if ($file->filename) {
                 Storage::delete('storage\pdf' . $file->filename);
             }
             $uploadedFile->move('storage\pdf', $newFilename);
+          
             $file->filename = $newFilename;
 
             if($ext != 'pdf'){
                 return redirect()->back()->with('error', 'Please upload only pdf file');
-            
+            }
+        }
+
+        if($request->hasFile('approvalSheet')){
+            $approvalSheetFile = $request->file('approvalSheet');
+            $newApprovalSheet = $approvalSheetFile->getClientOriginalName();
+            $approval_ext = $approvalSheetFile->getClientOriginalExtension();
+
+            $approvalSheetFile->move('storage\approvalSheet', $newApprovalSheet);
+            $file->approvalSheet = $newApprovalSheet;
+
+            if($approval_ext != 'pdf'){
+                return redirect()->back()->with('error', 'Please upload only pdf file');
             }
         }
         // Update other fields
@@ -203,7 +226,6 @@ public function store(Request $request)
         $file->campus = $request->input('campus');
         $file->citation = $request->input('citation');
         $file->drive_link = $request->input('drive_link');
-        
         $file->save();
 
         $userAction = 'Edit'; 
@@ -216,7 +238,6 @@ public function store(Request $request)
         ]);
         
         return redirect()->back()->with('success', 'File Updated Successfully!');
-        
     }
     public function destroy(string $id)
     {
@@ -260,11 +281,10 @@ public function store(Request $request)
     
         $colleges = college::all();
         $advisers = Adviser::orderBy('adviser_name', 'asc')->get();
-    
-        // Load the view with the data
+
         $pdf = PDF::loadView('pdf.search-result', compact('files', 'colleges', 'advisers','startDate', 'endDate'));
 
         return $pdf->stream('search_results.pdf');
     }
-
+    
 }

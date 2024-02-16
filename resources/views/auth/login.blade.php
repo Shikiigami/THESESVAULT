@@ -27,6 +27,7 @@
 <body>
         <div class="form-container">
           <p class="title"><a href ="https://psuthesesvault.online"><img src="{{asset('img/tvlogo.png')}}" alt="" width="250" style="margin-right: 15px;"></a></p>
+          
             <form class="form" method="POST" action="{{ route('login') }}">
              @csrf
               <input id="email" type="email" class="input @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email">

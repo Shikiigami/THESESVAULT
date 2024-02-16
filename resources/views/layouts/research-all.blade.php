@@ -143,8 +143,15 @@
                         <td>{{ $file->date_published }}</td>
                         <td style="vertical-align: middle!important;text-align: center;  ">
                           <div style="display: inline-flex; gap: 5px; justify-content: center;">
+                            <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Approval Sheet">
+                            <a href="{{ asset('storage/approvalSheet/' .$file->approvalSheet) }}" class="btn btn-success btn-sm">
+                              <i class="bi bi-file-text"></i>
+                          </a> 
+                        </span>
+                        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Edit File">                         
                           <a href="#" class="btn btn-warning btn-sm edit-modal-trigger" data-file="{{ json_encode($file) }}" data-target="#editModal_{{ $file->id }}"><i class="bi bi-pencil-square"></i></a>
-                      <!-- Start Edit Modal -->
+                        </span>
+                          <!-- Start Edit Modal -->
                   <div class="modal fade" id="editModal_{{ $file->id }}" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered  modal-lg">
                       <div class="modal-content">
@@ -232,11 +239,16 @@
                               <textarea class="form-control" name="citation" rows="1" placeholder="Citation" value=""></textarea>
                               </div>
                               <div class="col-6">
-                                <input type="text" class="form-control" name="drive_link" value="" placeholder="Pdf Drive Link" required>
+                                <input type="text" class="form-control" name="drive_link" value="" placeholder="Pdf Drive Link">
                                 </div>
-                              <div class="col-12">
-                              <input type="file" class="form-control" name="filename" value=""  accept="pdf" >
-                              </div>
+                                <div class="col-6">
+                                  <label for="filename"> Thesis PDF file:</label>
+                                <input type="file" class="form-control" name="filename" accept=".pdf" value="">
+                                </div>
+                                <div class="col-6">
+                                  <label for="approvalSheet"> Approval Sheet:</label>
+                                <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
+                                </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                             
@@ -250,7 +262,9 @@
                     <form action="{{ route('file.delete', ['id' => $file->id]) }}" method="POST">
                       @csrf
                       @method('DELETE')
+                      <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Delete File">
                       <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{$file->id}}"><i class="bi bi-trash"></i></button>
+                      </span>
                       <div class="modal fade" id="deleteModal{{$file->id}}" tabindex="-1">
                           <div class="modal-dialog modal-dialog-centered  modal-m">
                             <div class="modal-content">
@@ -374,12 +388,16 @@
               <textarea class="form-control" name="citation" rows="1" placeholder="Citation"></textarea>
               </div>
               <div class="col-6">
-                <input type="text" class="form-control" name="drive_link" placeholder="Pdf Drive Link" required>
+                <input type="text" class="form-control" name="drive_link" placeholder="Pdf Drive Link">
                 </div>
-              <div class="col-12">
+              <div class="col-6">
+                <label for="filename"> Thesis PDF file:</label>
               <input type="file" class="form-control" name="filename" accept=".pdf" required>
               </div>
-
+              <div class="col-6">
+                <label for="filename"> Approval Sheet:</label>
+              <input type="file" class="form-control" name="approvalSheet" accept=".pdf" required>
+              </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
             <button type="submit" name="submit" class="btn btn-primary "> Upload</button>
@@ -414,12 +432,16 @@
   <script src="{{ asset('vendor/simple-datatables/simple-datatables.js') }}"></script>
   <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
 
   <!-- Template Main JS File -->
   <script src="{{ asset('js/main.js') }}"></script>
   <!-- Your HTML -->
-
+  <script>$(function () {
+    $('[data-bs-toggle="popover"]').popover();
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const editModalTriggerButtons = document.querySelectorAll('.edit-modal-trigger');

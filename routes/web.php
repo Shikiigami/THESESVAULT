@@ -29,6 +29,7 @@ use App\Http\Controllers\SearchByDateController;
 use App\Http\Controllers\UserAdviserController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\UserCategorySearchController;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,7 @@ Route::post('/cs-favorites/add/{id}', [UserCsController::class, 'csAddToFavorite
 
 Route::delete('/file/{fid}/remove-favorites', [FavoritesController::class, 'destroy'])->name('file.remove');
 Route::get('/advisers-list', [UserAdviserController::class, 'index'])->name('user-adviser.index');
+Route::post('/delete-history', [SearchController::class, 'deleteHistory'])->name('delete-history');
 
 
 
@@ -75,9 +77,13 @@ Route::get('/fetch-fav-research/{id}', [FavoritesController::class, 'favfetchRes
 Route::get('/get-view/{filename}', [UserResearchController::class, 'viewAndSave'])->name('get.view');
 
 
+
+
 });
 
 Auth::routes(['verify' => true]);
+Route::post('/send-message', [LandingPageController::class, 'store'])->name('landing-page.store');
+Route::get('/load-data/{year}', [App\Http\Controllers\DashboardController::class, 'loadData']);
 Route::get('/home', [App\Http\Controllers\DashboardController::class, 'dashboard'])->name('home');
 Route::get('/google-redirect', [App\Http\Controllers\SocialController::class, 'googleRedirect']);
 Route::get('/auth/google/callback', [App\Http\Controllers\SocialController::class, 'loginWithGoogle']);
@@ -100,6 +106,8 @@ Route::put('/file/{id}/update', [ResearchController::class, 'update'])->name('fi
 Route::delete('/file/{id}/delete', [ResearchController::class, 'destroy'])->name('file.delete');
 Route::delete('/delete-user/{id}', [UserTableController::class, 'destroy'])->name('delete.user');
 Route::delete('/batch-delete-users', [UserTableController::class, 'batchDelete'])->name('batch.delete.users');
+Route::get('/adviser-fetching-endpoint', [ResearchController::class, 'fetchAdvisers']);
+
 
 
 Route::get('/ceat-research', [CeatController::class, 'index'])->name('ceatfile.index');
@@ -126,7 +134,8 @@ Route::get('/search-college', [CategorySearchController::class,'searchByCollege'
 Route::get('/search-program', [CategorySearchController::class,'searchByProgram'])->name('searchByProgram');
 
 Route::post('add-admin', [CreateAdminController::class, 'store'])->name('add.admin');
-Route::get('/audit_logs', [AuditLogController::class, 'index'])->name('showLogs');
+Route::get('/audit_logs', [AuditTrailController::class, 'index'])->name('showLogs');
+Route::get('/approval-sheet/{id}', [ResearchController::class, 'approvalSheet'])->name('approvalSheet');
 
 });
 

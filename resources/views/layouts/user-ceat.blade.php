@@ -109,6 +109,7 @@ setTimeout(hidePreloader, 1000);
     </div><!-- End Page Title -->
 
   <section class="section dashboard">
+    
     <div class="col-lg-12">
       <div class="card info-card revenue-card">
         <div class="filter">
@@ -167,6 +168,9 @@ setTimeout(hidePreloader, 1000);
         </div>
 
   <div class="row">
+    @if ($userCeatfiles->isEmpty())
+    <p>No research papers available</p>
+    @endif
     @foreach ($userCeatfiles as $research)
       <!-- Sales Card -->
       <div class="col-xxl-4 col-md-6">
@@ -227,7 +231,7 @@ setTimeout(hidePreloader, 1000);
              <p class="text-primary">
              <b class="text-dark">Title: </b>{{$research->filename}}<br>
              <b class="text-dark">Authors: </b>{{$research->author}} <br>
-             <b class="text-dark">Published Date: </b> {{$research->date_published}}<br>
+             <b class="text-dark">Approved Date: </b> {{$research->date_published}}<br>
              @php
               $collegeName = ($research->college == 130) ? 'CEAT' : (($research->college == 131) ? 'CS' : 'N/A');
               @endphp
@@ -327,27 +331,6 @@ setTimeout(hidePreloader, 1000);
   
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
   
-  <div class="modal fade" id="verticalycentered6" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered  modal-m">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">{{ pathinfo($research->filename, PATHINFO_FILENAME) }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        <h5 style="display: flex; align-items: center;">
-    <i class="ri-alert-line" style="font-size: 50px;"></i>
-    <span style="margin-left: 10px;">
-        System will know you if you download this file,
-        You must be responsible for any consequences.
-    </span>
-</h5>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Download</button>
-        </div>
-      </div>
-    </div>
-  </div>
    <!-- ======= Footer ======= -->
   
 

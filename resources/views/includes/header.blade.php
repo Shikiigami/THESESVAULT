@@ -16,19 +16,18 @@
     </div>
   @endif
 </div>
-
 <script>
   document.addEventListener('DOMContentLoaded', function () {
   setTimeout(function () {
     var alerts = document.querySelectorAll('.alert');
     alerts.forEach(function (alert) {
-      alert.classList.add('fade-out-up'); // Apply the fade-out-up animation class
+      alert.classList.add('fade-out-up');
 
       setTimeout(function () {
         alert.remove();
-      }, 1000); // Remove the alert after fading out
+      }, 1000);
     });
-  }, 2000); // Wait for 2 seconds before auto-fading
+  }, 2000);
 });
 </script>   
 
@@ -40,7 +39,7 @@
     <span class="d-none d-lg-block">ThesesVault</span>
   </a>
   <i class="bi bi-list toggle-sidebar-btn"></i>
-</div><!-- End Logo -->
+</div>
 
 <div class="search-bar">
     <form class="search-form d-flex align-items-center" action="{{ route('search-research') }}" method="GET">
@@ -51,8 +50,6 @@
     <ul id="search-history" class="results-list">
     </ul>
 </div>
-<!-- End Search Bar -->
-<!-- Include the jQuery library -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
  $(document).ready(function () {
@@ -60,11 +57,8 @@
     var resultsList = $('#search-results');
     var historyList = $('#search-history');
 
-    // Initially hide the results and history
     resultsList.hide();
     historyList.hide();
-    
-    // Function to show the most recent 3 search history items
     function showRecentHistory() {
         historyList.empty();
 
@@ -99,20 +93,15 @@
           searchInput.val(itemName);
           historyList.hide();
         } else {
-            // Handle other items if needed
+
         }
     });
     historyList.append(clickableItem);
 });
-
-
-    
-
-        // Retrieve the most recent 3 search history items via AJAX
         $.ajax({
             url: "{{ route('searches') }}",
             type: "GET",
-            data: { search: '' }, // Use an empty query to retrieve history
+            data: { search: '' },
             success: function (data) {
                 var recentHistory = data.history.slice(0, 3);
                 $.each(recentHistory, function (key, value) {
@@ -127,8 +116,6 @@
             }
         });
     }
-
-    // Function to show search results
     function showSearchResults(query) {
         $.ajax({
             url: "{{ route('searches') }}",
@@ -136,7 +123,7 @@
             data: { search: query },
             success: function (data) {
                 resultsList.empty();
-                historyList.hide(); // Hide search history when results are displayed
+                historyList.hide(); 
 
                 $.each(data.results, function (key, value) {
                     var resultItem = $('<li>' + value + '</li>');
@@ -151,33 +138,26 @@
             }
         });
     }
-
-    // Handle click event on the search input
     searchInput.on('click', function () {
         var query = $(this).val();
 
         if (query === '') {
-            // Show search history when input is clicked but empty
             showRecentHistory();
             resultsList.hide();
         }
     });
 
-    // Handle keyup event for text input
+ 
     searchInput.on('keyup', function () {
         var query = $(this).val();
 
         if (query === '') {
-            // Show search history when input is empty
             showRecentHistory();
             resultsList.hide();
             return;
         }
-
         showSearchResults(query);
     });
-
-    // Click event for the document to hide history when clicking outside
     $(document).on('click', function (e) {
         if (!searchInput.is(e.target) && !historyList.is(e.target)) {
             historyList.hide();
@@ -185,8 +165,6 @@
     });
 });
 </script>
-
-
 <nav class="header-nav ms-auto">
   <ul class="d-flex align-items-center">
     <li class="nav-item d-block d-lg-none">
@@ -194,18 +172,9 @@
         <i class="bi bi-search"></i>
       </a>
 
-    </li><!-- End Search Icon-->
-
-    {{-- add admin --}}
-
-    <li class="nav-item dropdown">
-      <a class="nav-link nav-icon" href="#" data-bs-toggle="modal" data-bs-target="#addAdminModal">
-        <i class="bi bi-person fs-3"></i>
-        <span class="badge bg-success badge-number">+</span>
-      </a>
     </li>
-    
    
+    <!-- End Messages Nav -->
     <li class="nav-item dropdown pe-3">
       <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
       <div style="position: relative; display: inline-block;">
@@ -215,7 +184,7 @@
     @endif
 </div>
         <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
-      </a><!-- End Profile Iamge Icon -->
+      </a>
 
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
         <li class="dropdown-header">
@@ -245,6 +214,15 @@
         <li>
           <hr class="dropdown-divider">
         </li>
+        <li>
+          <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+            <i class="bi bi-person-plus"></i>
+            <span>Add Admin</span>
+          </a>
+        </li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
 
         <li>
             <form method="POST" action="{{ route('logout') }}">
@@ -253,12 +231,12 @@
           </form>
         </li>
 
-      </ul><!-- End Profile Dropdown Items -->
-    </li><!-- End Profile Nav -->
+      </ul>
+    </li>
 
   </ul>
-</nav><!-- End Icons Navigation -->
-</header><!-- End Header -->
+</nav>
+</header>
 
 <div class="modal fade" id="searchByAuthor" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered  modal-m">
@@ -313,10 +291,6 @@
     </div>
   </div>
 </div>
-{{-- End of Add Admin --}}
-
-
-{{-- adviser search --}}
 
 <div class="modal fade" id="searchByAdviser" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered  modal-m">
@@ -339,7 +313,6 @@
   </div>
 </div>
 
-{{-- college search --}}
 
 <div class="modal fade" id="searchByCollege" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered  modal-m">
@@ -365,8 +338,6 @@
     </div>
   </div>
 </div>
-
-{{-- program search --}}
 
 <div class="modal fade" id="searchByProgram" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered  modal-m">
@@ -400,3 +371,4 @@
     </div>
   </div>
 </div>
+
