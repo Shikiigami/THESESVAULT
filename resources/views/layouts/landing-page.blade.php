@@ -120,7 +120,7 @@
                         <h1>Unlock a world full of knowledge with <em>THESESVAULT</em></h1>
                         <p>Dive into a treasure trove of Palawan State University's very own Theses and Dissertations Digital Repository.
                             Discover the knowledge you need to excel in your studies and research projects. <br></p> 
-                            <a href="#needhelp"  class="main-button-slider" style="margin-right: 20px;">CLICK ME! FOR GUIDE</a><span> <a href="{{route('login')}}"  class="main-button-slider">GET STARTED</a></span>
+                            <a href="#needhelp"  class="main-button-slider" style="margin-right: 20px;">CLICK ME! FOR GUIDE</a><span> <a href="{{route('role.index')}}"  class="main-button-slider">GET STARTED</a></span>
                     </div>
                 </div>
             </div>

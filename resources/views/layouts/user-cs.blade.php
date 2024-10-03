@@ -64,7 +64,6 @@ setTimeout(hidePreloader, 1000);
 
 
   <main id="main" class="main">
-
     <div class="pagetitle">
       <h1><img src="{{ asset ('img/cs.png') }}" alt="img" width="40" height="40"> College of Sciences Theses</h1>
       <div class="fixed-top-alert">
@@ -84,7 +83,6 @@ setTimeout(hidePreloader, 1000);
     </div>
   @endif
 </div>
-
 <script>
   document.addEventListener('DOMContentLoaded', function () {
   setTimeout(function () {
@@ -138,7 +136,6 @@ setTimeout(hidePreloader, 1000);
         </div>
     </div> 
 </div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -153,11 +150,8 @@ setTimeout(hidePreloader, 1000);
             $(currentItem).fadeOut(1000, () => {
                 $(nextItem).fadeIn(1000);
             });
-
             currentIndex = nextIndex;
         }
-
-        // Start the animation
         $(researchItems[currentIndex]).fadeIn(1000);
         setInterval(showNextResearchItem, 3000); // Change the interval as needed (in milliseconds)
     });
@@ -209,9 +203,14 @@ setTimeout(hidePreloader, 1000);
               
               </div>
             </div>
-            <div class="d-flex align-items-start" style="float: right; margin: 10px;">
-              <a href="#" data-bs-toggle="modal" data-bs-target="#citation{{$research->id}}"><span class="btn btn-success btn-sm align-items-start;"><i class="bi bi-chat-quote-fill"></i> Citation</span></a>&nbsp;
+             <div class="d-flex align-items-start" style="float: right; margin: 10px;">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#request{{$research->id}}"><span class="btn btn-success btn-sm align-items-start;"><i class="bi bi-hand-index-thumb"></i> Request</span></a>&nbsp;
+             @if($research->privacy === 'public')
               <a href="{{ route('get.view', ['filename' => $research->filename]) }}" target="_blank"><span class="btn btn-warning btn-sm align-items-start"><i class="bi bi-eye-fill"></i> View</span></a>&nbsp;
+              @endif
+              @if($research->privacy === 'restricted')
+              <a href="#" data-bs-toggle="modal" data-bs-target="#fullrequest{{$research->id}}"><span class="btn btn-danger btn-sm align-items-start"><i class="bi bi-eye-fill"></i> View</span></a>&nbsp;
+              @endif
             </div>
           </div>
         </div>
@@ -224,7 +223,7 @@ setTimeout(hidePreloader, 1000);
                     var modal = new bootstrap.Modal(document.getElementById('viewfile' + modalId));
                     modal.show();
                 }
-            </script>
+  </script>
 
   <!-- view modal -->
   <div class="modal fade" id="verticalycentered7{{$research->id}}" tabindex="-1">
@@ -239,13 +238,17 @@ setTimeout(hidePreloader, 1000);
              <b class="text-dark">Title: </b>{{$research->filename}}<br>
              <b class="text-dark">Authors: </b>{{$research->author}} <br>
              <b class="text-dark">Approved Date: </b> {{$research->date_published}}<br>
-             @php
-              $collegeName = ($research->college == 130) ? 'CEAT' : (($research->college == 131) ? 'CS' : 'N/A');
-              @endphp
-             <b class="text-dark">College: </b>{{$collegeName}}<br>
-             <b class="text-dark">Adviser: </b>{{$research->adviser}}
+             <b class="text-dark">Program: </b>{{$research->program}}<br>
+             <b class="text-dark">Citation: </b><br>
+             <div class="citationContainer">
+              <span class="text-primary small pt-1" style="display: flex; align-items: center;">
+                  <code class="citationCode" style="margin: 0; padding: 10px; background-color: #f8f9fa; border: 1px solid #d1d1d1; border-radius: 4px; display: flex; align-items: center; width: 100%;">
+                      {{$research->citation}}
+                  </code>
+                  <i class="ri-file-copy-2-line text-success clipboardIcon"  style="font-size: 30px; margin-left: 10px; cursor: pointer;"></i>
+              </span>
+          </div>
              </p>
-          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Close</button>
@@ -254,51 +257,60 @@ setTimeout(hidePreloader, 1000);
     </div>
   </div><!-- End view Modal-->
 
-   <!-- Citatation modal -->
-   <div class="modal fade" id="citation{{$research->id}}" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered  modal-m">
+    <!-- requests modal -->
+<div class="modal fade" id="request{{$research->id}}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-m">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">{{ pathinfo($research->filename, PATHINFO_FILENAME) }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        <h5 class="text" style="display: flex; align-items: center;">
-    <i class="ri-file-list-line" style="font-size: 50px;"></i>
-    <span class="text-success small pt-1 fw-bold" style="margin-left: 10px;">
-    {{$research->citation}}
-    </span>
-       </h5>
-      </div>
-    </div>
-  </div>
-  </div> <!--End of Citation Modal -->
-
-  <!-- Start download Modal -->
-  <div class="modal fade" id="download{{$research->id}}" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered  modal-m">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">{{ pathinfo($research->filename, PATHINFO_FILENAME) }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-              <h6 style="display: flex; align-items: center;">
-          <i class="ri-alert-line" style="font-size: 40px; color:red;"></i>
-          <span class="text-danger" style="margin-left: 10px;">
-          If you download this file, the system will be able to identify you, 
-          and you will be held accountable for any resulting outcomes or repercussions.
-          </span>
-          </h6>
-          <div class="modal-footer">
-           <a href="{{ route('download.research', ['filename' => $research->filename]) }}" class="btn btn-primary btn-sm download-button">Download anyway</a>
-            </div>
-
-            </div>
+          <div class="modal-header">
+              <h5 class="modal-title">Request Approval sheet of {{ pathinfo($research->filename, PATHINFO_FILENAME) }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-        </div>
-    </div><!-- End download modal -->
-     
+          <div class="modal-body" style="width: 100%;">
+              <form method="POST" action="{{route('request.add', ['id'=> $research->id]) }}" class="row g-3 needs-validation">
+                @csrf
+                <div class="col-6">
+                  <input type="text" name="purpose" class="form-control" placeholder="Purpose" required>
+                </div>
+                <div class="col-6">
+                  <select  name="receive_thru" class="form-control" placeholder="Receive Thru" required >
+                    <option value="" disabled selected>Receive Thru</option>
+                    <option value="Email">Email</option>
+                    <option value="F2F Transaction">F2F Transaction</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                  <button type="submit" name="submit" class="btn btn-primary "> Request</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- full-text requests modal -->
+<div class="modal fade" id="fullrequest{{$research->id}}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-m">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Request Full Text document of {{ pathinfo($research->filename, PATHINFO_FILENAME) }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="width: 100%;">
+              <form method="POST" action="{{route('fullrequest.add', ['id'=> $research->id]) }}" class="row g-3 needs-validation">
+                @csrf
+                <div class="col-12">
+                  <input type="text" name="purpose" class="form-control" placeholder="Purpose" required>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                  <button type="submit" name="submit" class="btn btn-primary "> Request</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
     @endforeach
   </div>
   {{ $userCsfiles->links('vendor.pagination.default') }}

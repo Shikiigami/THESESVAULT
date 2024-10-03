@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\research;
 use App\Models\college;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
@@ -26,7 +27,20 @@ class CeatController extends Controller
     $ceatfiles = $ceatfiles->paginate($perPage);
     $colleges = college::all()->where('id', '130');
     $advisers = Adviser::all();
-    return view('layouts.ceat-research', compact('ceatfiles', 'colleges','advisers'));
+    
+    
+    $result = DB::select("SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'interest'");
+    $enumValues = [];
+  if (!empty($result)) {
+      preg_match('/^enum\((.*)\)$/', $result[0]->COLUMN_TYPE, $matches);
+      if (isset($matches[1])) {
+          $enumValues = explode(',', $matches[1]);
+          $enumValues = array_map(function ($value) {
+              return trim($value, "'");
+          }, $enumValues);
+      }
+  }
+    return view('layouts.ceat-research', compact('ceatfiles', 'colleges','advisers','enumValues'));
     }
  
 }

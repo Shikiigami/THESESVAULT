@@ -109,7 +109,7 @@ setTimeout(hidePreloader, 1000);
 
     <section class="section dashboard">
       <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-14">
         <div class="card">
         <div class="card-body">
           <h5 class="card-title">User Data List<button type="button" class="btn btn-danger btn-sm" style="margin-right: 50px; float:right;" data-bs-toggle="modal" data-bs-target="#deleteAllUsers">
@@ -144,7 +144,8 @@ setTimeout(hidePreloader, 1000);
         </div>
         
           <!-- Table with hoverable rows -->
-          <table class="table datatable">
+          <div class="table-responsive">
+          <table class="table datatable table-hover">
             <thead>
               <tr>
                 <th scope="col">Profile Picture</th>
@@ -156,7 +157,7 @@ setTimeout(hidePreloader, 1000);
                 <th scope="col">Last login</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
-                 
+                
               </tr>
             </thead>
             <tbody>
@@ -178,8 +179,7 @@ setTimeout(hidePreloader, 1000);
                       <span class="badge {{ $user->last_login < $sixMonthsAgo ? 'border-danger border-1 text-danger' : 'border-success border-1 text-success' }}">
                           {{ $user->last_login }}
                       </span>
-                  </td>
-                    </td>               
+                  </td>            
                     <td scope="row">
                     @if($user->status === 'Active')
                     <span class="badge bg-success">{{ $user->status }}</span>
@@ -187,8 +187,8 @@ setTimeout(hidePreloader, 1000);
                     <span class="badge bg-danger">{{ $user->status }}</span>
                     @endif
                     </td>
-                    @if($user->last_login < $sixMonthsAgo || is_null($user->email_verified_at) && $user->created_at < $oneDayAgo)
                     <td scope="row">
+                    @if($user->last_login < $sixMonthsAgo || is_null($user->email_verified_at) && $user->created_at < $oneDayAgo)
                       <form action="{{ route('delete.user', ['id' => $user->id]) }}" method="POST">
                         @csrf
                         @method('DELETE')
@@ -216,14 +216,14 @@ setTimeout(hidePreloader, 1000);
                             </div>
                         </div>
                     </form>
-                    </td>
+                  </td>
                     @else
-                    <td></td>
                     @endif
                 </tr>
             @endforeach
       </tbody>
     </table>
+  </div>
     {{ $users->links('vendor.pagination.default') }}
   </div>
 </div>

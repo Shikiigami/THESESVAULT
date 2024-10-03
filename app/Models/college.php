@@ -13,7 +13,7 @@ class college extends Model
 
     public function research()
 {
-    return $this->hasMany(Research::class, 'college', 'id');
+    return $this->hasMany(research::class, 'college', 'id');
 }
 public function users()
     {

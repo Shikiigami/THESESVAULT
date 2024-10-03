@@ -9,7 +9,7 @@ class favorites extends Model
 {
     protected $table = 'favorites'; 
     protected $primaryKey = 'fid';
-    protected $fillable = ['user_id','filename','created_at','updated_at'];
+    protected $fillable = ['user_id','research_id','filename','created_at','updated_at'];
 
     public function user()
     {
@@ -18,6 +18,11 @@ class favorites extends Model
 
     public function filename()
     {
-        return $this->belongsTo(Research::class, 'filename', 'filename');
+        return $this->belongsTo(research::class, 'filename', 'filename');
+    }
+    
+    public function research()
+    {
+        return $this->belongsTo(research::class, 'researh_id', 'id');
     }
 }

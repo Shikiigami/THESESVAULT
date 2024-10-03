@@ -131,7 +131,7 @@ class UserCategorySearchController extends Controller
             });
         }
     
-        $userResearch = $query->paginate(6);
+        $userResearch = $query->paginate();
     
         if ($userResearch->isEmpty()) {
             return redirect()->back()->with('error', 'No results found for your search.');

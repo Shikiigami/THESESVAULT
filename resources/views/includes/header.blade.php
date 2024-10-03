@@ -41,6 +41,7 @@
   <i class="bi bi-list toggle-sidebar-btn"></i>
 </div>
 
+ @if(Auth::check() && Auth::user()->role === 'admin')
 <div class="search-bar">
     <form class="search-form d-flex align-items-center" action="{{ route('search-research') }}" method="GET">
         <input type="text" id="search" name="search" placeholder="Search" required>
@@ -50,6 +51,7 @@
     <ul id="search-history" class="results-list">
     </ul>
 </div>
+@endif
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
  $(document).ready(function () {
@@ -178,18 +180,22 @@
     <li class="nav-item dropdown pe-3">
       <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
       <div style="position: relative; display: inline-block;">
+    @auth
     <img src="{{ Auth::user()->profile_picture ? asset('storage/pictures/' . Auth::user()->profile_picture) : asset('img/null-profile.png') }}" alt="Profile Picture" class="rounded-circle">
-    @if(Auth::user()->status === 'Active')
-        <span style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background-color: #4DED30; border-radius: 50%;"></span>
+    @endauth
+    @if(Auth::check() && Auth::user()->status === 'Active')
+    <span style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background-color: #4DED30; border-radius: 50%;"></span>
     @endif
+
+   
 </div>
-        <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
+        <span class="d-none d-md-block dropdown-toggle ps-2">{{Auth::user()->name }}</span>
       </a>
 
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
         <li class="dropdown-header">
-          <h6>{{ Auth::user()->name }}</h6>
-          <span>{{ Auth::user()->email }}</span>
+          <h6>{{Auth::user()->name }}</h6>
+          <span>{{Auth::user()->email }}</span>
         </li>
         <li>
           <hr class="dropdown-divider">
@@ -201,16 +207,7 @@
             <span>My Profile</span>
           </a>
         </li>
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-
-        <li>
-          <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-            <i class="bi bi-question-circle"></i>
-            <span>Need Help?</span>
-          </a>
-        </li>
+        @if (auth()->check() && auth()->user()->role === 'admin')
         <li>
           <hr class="dropdown-divider">
         </li>
@@ -223,7 +220,25 @@
         <li>
           <hr class="dropdown-divider">
         </li>
-
+        <li>
+          <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#addFieldModal">
+            <i class="bi bi-plus-circle"></i>
+            <span>Add Field</span>
+          </a>
+        </li>
+        @endif
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+         <li>
+          <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+            <i class="bi bi-question-circle"></i>
+            <span>Need Help?</span>
+          </a>
+        </li>
+         <li>
+          <hr class="dropdown-divider">
+        </li>
         <li>
             <form method="POST" action="{{ route('logout') }}">
               @csrf
@@ -271,17 +286,35 @@
       <div class="modal-body">
       <form method="POST" action="{{route('add.admin')}}" enctype="multipart/form-data" class="row g-3 needs-validation">
         @csrf
-        <div class="col-6">
+        <div class="col-4">
           <input type="text" id="admin_name" name="admin_name" class="form-control" placeholder ="Admin Name" required>
         </div>
-        <div class="col-6">
+        <div class="col-4">
           <input type="text" id="admin_email" name="admin_email" class="form-control" placeholder ="Admin Email " required>
         </div>
-        <div class="col-6">
-          <input type="text" id="admin_password" name="admin_password" class="form-control" placeholder ="Password" required>
+        <div class="col-4">
+          <select id="admin_role" class="form-control" name="admin_role" placeholder="Search By Program" required>
+            <option value="" disabled selected>Admin Role</option>
+            <option value="admin">Super Admin</option>
+            <option value="sub-admin">Sub Admin</option>   
+          </select>
         </div>
-        <div class="col-6">
-          <input type="text" id="admin_cpassword" name="admin_cpassword" class="form-control" placeholder ="Confirm Password" required>
+        <div class="col-4">
+          <select id="admin_college" class="form-control" name="admin_college" placeholder="College">
+              <option value="" disabled selected>Admin College</option>
+              @php
+                  $colleges = \App\Models\college::all();
+              @endphp
+              @foreach ($colleges as $college)
+                  <option value="{{$college->id}}">{{$college->college_name}}</option>
+              @endforeach
+          </select>
+      </div>
+        <div class="col-4">
+          <input type="password" id="admin_password" name="admin_password" class="form-control" placeholder ="Password" required>
+        </div>
+        <div class="col-4">
+          <input type="password" id="admin_cpassword" name="admin_cpassword" class="form-control" placeholder ="Confirm Password" required>
         </div>
       <div class="d-grid gap-2">
       <button type="submit" name="submit" class="btn btn-primary btn-sm "><i class="bi bi-plus"></i> Create Admin</button>
@@ -291,6 +324,33 @@
     </div>
   </div>
 </div>
+
+
+{{-- add field modal --}}
+
+<div class="modal fade" id="addFieldModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered  modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title"><i class="bi bi-person-plus fs-3"></i> Add Field</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      <form method="POST" action="{{route('add.field')}}" enctype="multipart/form-data" class="row g-3 needs-validation">
+        @csrf
+        <div class="col-12">
+          <input type="text" id="field_name" name="new_field" class="form-control" placeholder ="Field Name" required>
+        </div>
+      <div class="d-grid gap-2">
+      <button type="submit" name="submit" class="btn btn-primary btn-sm "><i class="bi bi-plus"></i> Add Field</button>
+      </div>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 
 <div class="modal fade" id="searchByAdviser" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered  modal-m">

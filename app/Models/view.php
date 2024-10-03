@@ -13,12 +13,12 @@ class view extends Model
 
     public function researchId()
     {
-        return $this->belongsTo(Research::class, 'research_id', 'id');
+        return $this->belongsTo(research::class, 'research_id', 'id');
     }
 
     public function filename()
     {
-        return $this->belongsTo(Research::class, 'filename', 'filename');
+        return $this->belongsTo(research::class, 'filename', 'filename');
     }
     public function user()
     {
@@ -26,7 +26,7 @@ class view extends Model
     }
     public function research_college()
     {
-        return $this->belongsTo(Research::class, 'research_college', 'college');
+        return $this->belongsTo(research::class, 'research_college', 'college');
     }
     public function user_college()
     {

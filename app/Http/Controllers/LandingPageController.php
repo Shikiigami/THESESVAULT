@@ -8,7 +8,7 @@ use App\Models\messages;
 class LandingPageController extends Controller
 {
     public function index(){
-        return view('layouts.landing-page');
+        return view('layouts.newlandingPage');
     }
 
     public function store(Request $request)

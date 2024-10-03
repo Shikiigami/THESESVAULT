@@ -111,21 +111,21 @@ setTimeout(hidePreloader, 1000);
 
     <section class="section dashboard">
       <div class="row">
-            
+        
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Theses Data</h5>
 
               <!-- Table with hoverable rows -->
-              <table class="table table-hover">
+              <table class="table datatable table-hover">
                 <thead>
                   <tr>
-                    <th scope="col">Doc No.</th>
+                    <th scope="col">Call No.</th>
                     <th scope="col">Title</th>
                     <th scope="col">Authors</th>
                     <th scope="col">Program</th>
                     <th scope="col">Adviser</th>
-                    <th scope="col">Pub. Date</th>
+                    <th scope="col">Year</th>
                     <th scope="col">Action</th>
                     
                   </tr>
@@ -138,12 +138,32 @@ setTimeout(hidePreloader, 1000);
                         <td>{{ $file->author }}</td>
                         <td>{{ $file->program }}</td>
                         <td>{{ $file->adviser }}</td>
-                        <td>{{ $file->date_published }}</td>
+                        <td>{{\Carbon\carbon::parse($file->date_published)->format('Y')}}</td>
                         <td style="vertical-align: middle!important;text-align: center;">
                     <div style="display: inline-flex; gap: 5px; justify-content: center;">
-                      <a href="{{ asset('storage/approvalSheet/' .$file->approvalSheet) }}" class="btn btn-success btn-sm">
-                        <i class="bi bi-file-text"></i>
-                    </a> 
+                         <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Approval / Abstract Sheet">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#approvalAbstract{{ $file->id }}" class="btn btn-success btn-sm">
+                              <i class="bi bi-file-text"></i>
+                          </a> 
+                        </span>
+                    <div class="modal fade" id="approvalAbstract{{ $file->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Approval Sheet and Abstract</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Approval sheett">
+                                <p>View Approval Sheet: <span><a href=" {{ asset('storage/approvalSheet/' .$file->approvalSheet) }}">{{$file->approvalSheet}}</a></span></p>
+                              </span>
+                              <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Abstract Sheet">
+                                <p>View Abstract: <span><a href=" {{ asset('storage/abstract/' .$file->abstract) }}">{{$file->abstract}}</a></span></p>
+                              </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                     <a href="#" class="btn btn-warning btn-sm edit-modal-trigger" data-file="{{ json_encode($file) }}" data-target="#editModal_{{ $file->id }}"><i class="bi bi-pencil-square"></i></a>
                         <!-- Start Edit Modal -->
                     <div class="modal fade" id="editModal_{{ $file->id }}" tabindex="-1">
@@ -165,6 +185,14 @@ setTimeout(hidePreloader, 1000);
                                 <input type="text" name="author" class="form-control" value=""  >
                               </div>
                               <div class="col-6">
+                                  <select class="form-control" name="college" placeholder="College" required>
+                                  <option value="" disabled selected>Select</option>
+                                      @foreach ($colleges as $college)
+                                          <option value="{{ $college->id }}">{{ $college->college_name }}</option>
+                                      @endforeach
+                              </select>
+                                </div>
+                              <div class="col-6">
                               <select class="form-control" name="program" value=""  >
                               <option value="" disabled selected>Program</option>
                                       <option value="BS Civil Engineering">BS Civil Engineering</option>
@@ -174,33 +202,66 @@ setTimeout(hidePreloader, 1000);
                                       <option value="BS Architecture">BS Architecture</option>
                                     </select>
                               </div>
-                              <div class="col-6">
-                                  <select class="form-control" name="college" placeholder="College" required>
-                                  <option value="" disabled selected>Select</option>
-                                      @foreach ($colleges as $college)
-                                          <option value="{{ $college->id }}">{{ $college->college_name }}</option>
-                                      @endforeach
-                              </select>
-                                </div>
-                                <div class="col-6">
-                                  <select class="form-control" name="adviser" placeholder="Adviser" required>
-                                    <option value="" disabled selected>Adviser</option>
-                                        @foreach ($advisers as $adviser)
-                                            <option value="{{ $adviser->adviser_name }}">{{ $adviser->adviser_name }}</option>
-                                        @endforeach
-                                </select>
-                                  </div>
+                              
+                               <div class="col-lg-6 position-relative">
+                            <input class="form-control" type="text" name="adviser" placeholder="Adviser" required value="">
+                            <div class="custom-select" id="adviserList" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; max-width: calc(100% - 2px); z-index: 100; background-color: #fff; border: 1px solid #ced4da; border-top: none; overflow-y: auto; padding: 8px; border-radius: 8px;">
+                                @foreach ($advisers as $adviser)
+                                    <div class="option" style="padding: 2px;">{{ $adviser->adviser_name }}</div>
+                                @endforeach
+                            </div>
+                        </div>
+                        
+                          <script>
+                              $('input[name="adviser"]').on('input', function() {
+                                  var input = $(this).val().toLowerCase();
+                                  var options = $('#adviserList').find('.option');
+                          
+                                  options.each(function() {
+                                      var optionText = $(this).text().toLowerCase();
+                                      if (optionText.indexOf(input) > -1) {
+                                          $(this).show();
+                                      } else {
+                                          $(this).hide();
+                                      }
+                                  });
+                          
+                                  $('#adviserList').show();
+                              });
+                          
+                              $(document).on('click', function(e) {
+                                  if (!$(e.target).closest('#adviserList').length && !$(e.target).is('input[name="adviser"]')) {
+                                      $('#adviserList').hide();
+                                  }
+                              });
+                          
+                              $(document).on('click', '.option', function() {
+                                  var selectedValue = $(this).text();
+                                  $('input[name="adviser"]').val(selectedValue);
+                                  $('#adviserList').hide();
+                              });
+                          </script>
                                 <div class="col-6">
                                   <input type="date" name="date_published" class="form-control"  value=""   >
                                 </div>
                                 <div class="col-6">
-                                  <select class="form-control" name="fieldname" value="" required>
-                                      <option value="" disabled selected>Field Name</option>
-                                      <option value="Business" >Business</option>
-                                      <option value="Technology">Technology</option>
-                                      <option value="Education">Education</option>
-                                    </select>
-                                </div>
+                                <textarea  name="tags" rows="1" class="form-control" placeholder="Tags"  value="" ></textarea>
+                              </div>
+                              <div class="col-6">
+                                <select class="form-control" name="privacy" value="" required>
+                                  <option value="" disabled selected>Select Thesis Privacy</option>
+                                  <option value="public">Public</option>
+                                  <option value="restricted">Restricted</option>
+                                </select>
+                              </div>
+                                <div class="col-6">
+                                    <select class="form-control" name="fieldname" placeholder="Field Name" required>
+                                      <option value="" selected disabled> Field Name</option>
+                                      @foreach($enumValues as $value)
+                                      <option value="{{ $value }}">{{ $value }}</option>
+                                      @endforeach
+                                      </select>
+                                  </div>
                                 <div class="col-6">
                                   <select class="form-control" name="campus" placeholder="Campus" required>
                                       <option value="" disabled selected>Campus Name</option>
@@ -230,14 +291,18 @@ setTimeout(hidePreloader, 1000);
                                   <div class="col-6">
                                     <input type="text" class="form-control" name="drive_link" value="" placeholder="Pdf Drive Link" required>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
                                       <label for="filename"> Thesis PDF file:</label>
                                     <input type="file" class="form-control" name="filename" accept=".pdf" value="">
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-4">
                                       <label for="approvalSheet"> Approval Sheet:</label>
                                     <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
                                     </div>
+                                    <div class="col-4">
+                                        <label for="abstract"> Abstract:</label>
+                                      <input type="file" class="form-control" name="abstract" accept=".pdf" value="">
+                                      </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                               
@@ -279,6 +344,7 @@ setTimeout(hidePreloader, 1000);
                 </td>
               </tr>
             @endforeach
+                
                 </tbody>
               </table>
               {{ $ceatfiles->links('vendor.pagination.default') }}
@@ -308,6 +374,14 @@ setTimeout(hidePreloader, 1000);
               <input type="text" name="author" class="form-control" placeholder="Authors" required >
             </div>
             <div class="col-6">
+            <select class="form-control" name="college" placeholder="College" required>
+                <option value="" disabled selected>College</option>
+                    @foreach ($colleges as $college)
+                        <option value="{{ $college->id }}">{{ $college->college_name }}</option>
+                    @endforeach
+            </select>
+              </div>
+            <div class="col-6">
             <select class="form-control" name="program" placeholder="Program" required>
                     <option value="" disabled selected>Program</option>
                     <option value="BS Civil Engineering">BS Civil Engineering</option>
@@ -317,7 +391,70 @@ setTimeout(hidePreloader, 1000);
                     <option value="BS Architecture">BS Architecture</option>    
                   </select>
             </div>
-            <div class="col-6">
+             <div class="col-6">
+            <input class="form-control" type="text" name="adviser" id="adviserInput" placeholder="Adviser" required>
+            <div id="adviserSuggestions" class="suggestions-container"></div>
+        </div>        
+         <script>
+          // Function to show search results based on input query
+              function showAdviserResults(query) {
+                  $.ajax({
+                      url: "/filter-advisers", // Adjust the URL to your endpoint
+                      type: "GET",
+                      data: { adviser: query },
+                      success: function(data) {
+                          $('#adviserSuggestions').empty(); // Corrected here
+
+                          $.each(data, function(key, value) {
+                            var adviserItem = $('<li style="list-style-type: none; padding: 8px;"> ' + value.adviser_name + '</li>');
+                              adviserItem.on('click', function() {
+                                  $('#adviserInput').val(value.adviser_name);
+                                  $('#adviserSuggestions').hide(); // Corrected here
+                              });
+                              $('#adviserSuggestions').append(adviserItem); // Corrected here
+                          });
+
+                          $('#adviserSuggestions').show(); // Corrected here
+                      },
+                      error: function(xhr, status, error) {
+                          console.error('Error fetching advisers:', error);
+                      }
+                  });
+              }
+              // Handle keyup event for text input
+              $('#adviserInput').on('keyup', function() {
+                  var query = $(this).val().trim();
+
+                  if (query === '') {
+                      $('#adviserSuggestions').hide(); // Corrected here
+                      return;
+                  }
+
+                  showAdviserResults(query);
+              });
+                        </script>
+              <div class="col-6">
+                <input type="date" name="date_published" class="form-control"  placeholder ="Published Date" required >
+              </div>
+                <div class="col-6">
+                <textarea  name="tags" rows="1" class="form-control" placeholder="Tags"  value="" ></textarea>
+              </div>
+              <div class="col-6">
+                <select class="form-control" name="privacy" value="" required>
+                  <option value="" disabled selected>Select Thesis Privacy</option>
+                  <option value="public">Public</option>
+                  <option value="restricted">Restricted</option>
+                </select>
+              </div>
+               <div class="col-6">
+                <select class="form-control" name="fieldname" placeholder="Field Name" required>
+                  <option value="" selected disabled> Field Name</option>
+                  @foreach($enumValues as $value)
+                  <option value="{{ $value }}">{{ $value }}</option>
+                  @endforeach
+                  </select>
+              </div>
+              <div class="col-6">
               <select class="form-control" name="campus" placeholder="Campus" required>
                   <option value="" disabled selected>Campus Name</option>
                   <option value="Main Campus">Main Campus</option>
@@ -341,34 +478,22 @@ setTimeout(hidePreloader, 1000);
                 </select>
             </div>
             <div class="col-6">
-            <select class="form-control" name="college" placeholder="College" required>
-                <option value="" disabled selected>College</option>
-                    @foreach ($colleges as $college)
-                        <option value="{{ $college->id }}">{{ $college->college_name }}</option>
-                    @endforeach
-            </select>
+              <textarea class="form-control" name="citation" rows="1" placeholder="Citation" value=""></textarea>
               </div>
               <div class="col-6">
-                <select class="form-control" name="adviser" placeholder="Adviser" required>
-                  <option value="" disabled selected>Adviser</option>
-                      @foreach ($advisers as $adviser)
-                          <option value="{{ $adviser->adviser_name }}">{{ $adviser->adviser_name }}</option>
-                      @endforeach
-              </select>
+                <input type="text" class="form-control" name="drive_link" value="" placeholder="Pdf Drive Link" required>
                 </div>
-              <div class="col-6">
-                <input type="date" name="date_published" class="form-control"  placeholder ="Published Date" required >
-              </div>
-              <div class="col-6">
-                <select class="form-control" name="fieldname" placeholder="Field Name" required>
-                    <option value="" disabled selected>Field Name</option>
-                    <option value="Business" >Business</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Education">Education</option>
-                  </select>
-              </div>
-              <div class="col-6">
+              <div class="col-4">
+             <label for="filename">Thesis PDF file:</label>
               <input type="file" class="form-control" name="filename" accept=".pdf" required>
+              </div>
+               <div class="col-4">
+                <label for="approvalSheet"> Approval Sheet:</label>
+              <input type="file" class="form-control" name="approvalSheet" accept=".pdf" required>
+              </div>
+              <div class="col-4">
+                <label for="abstract"> Abstract:</label>
+              <input type="file" class="form-control" name="abstract" accept=".pdf" required>
               </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
@@ -379,82 +504,6 @@ setTimeout(hidePreloader, 1000);
       </div>
     </div>
   </div><!-- End of Upload  Modal-->  
-    
-   <!-- Start Edit Modal -->
-   <div class="modal fade" id="editModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered  modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-              <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Research Material</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        <form action="{{ route('file.update',['id' => $file->id]) }}" method="POST" enctype="multipart/form-data" class="row g-3 needs-validation">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="id">
-          <div class="col-6">
-              <input type="text" name="callno" class="form-control" value="" >
-            </div>
-            <div class="col-6">
-              <input type="text" name="author" class="form-control" value=""  >
-            </div>
-            <div class="col-6">
-            <select class="form-control" name="program" placeholder="Program" required>
-                    <option value="" disabled selected>Program</option>
-                    <option value="BS Civil Engineering">BS Civil Engineering</option>
-                    <option value="BS Mechanical Engineering">BS Mechanical Engineering</option>
-                    <option value="BS Petroleum Engineering">BS Petroleum Engineering</option>
-                    <option value="BS Electrical Engineering">BS Electrical Engineering</option>
-                    <option value="BS Architecture">BS Architecture</option>    
-                  </select>
-            </div>
-            <div class="col-6">
-            <select class="form-control" name="college" placeholder="College" required>
-                <option value="" disabled selected>College</option>
-                    @foreach ($colleges as $college)
-                        <option value="{{ $college->id }}">{{ $college->college_name }}</option>
-                    @endforeach
-            </select>
-              </div>
-            <div class="col-6">
-                <input type="text" name="adviser" class="form-control" value=""  >
-              </div>
-              <div class="col-6">
-                <input type="date" name="date_published" class="form-control"  value=""   >
-              </div>
-              <div class="col-6">
-                <select class="form-control" name="fieldname" value="" >
-                    <option value="" disabled selected>Field Name</option>
-                    <option value="Business" >Business</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Education">Education</option>
-                  </select>
-              </div>
-              <div class="col-6">
-                <textarea class="form-control" name="citation" rows="1" placeholder="Citation"></textarea>
-                </div>
-                <div class="col-6">
-                  <input type="text" class="form-control" name="drive_link" placeholder="Pdf Drive Link" required>
-                  </div>
-                  <div class="col-6">
-                    <label for="filename"> Thesis PDF file:</label>
-                  <input type="file" class="form-control" name="filename" accept=".pdf" value="">
-                  </div>
-                  <div class="col-6">
-                    <label for="approvalSheet"> Approval Sheet:</label>
-                  <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
-                  </div>
-          <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-          <button type="submit" name="submit" class="btn btn-primary ">Update</button>
-         </div>
-            </div>
-            </form>
-        </div>
-      </div>
-    </div>
-  </div><!-- End of Edit  Modal-->  
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
@@ -501,6 +550,9 @@ setTimeout(hidePreloader, 1000);
             const fieldnameField = editModal.querySelector('[name="fieldname"]');
             const citationField = editModal.querySelector('[name="citation"]');
             const drive_linkField = editModal.querySelector('[name="drive_link"]');
+            const tagsField = editModal.querySelector('[name="tags"]');
+            const privacyField = editModal.querySelector('[name="privacy"]');
+
 
             // Set values in the modal fields
             idField.value = fileData.id;
@@ -514,6 +566,8 @@ setTimeout(hidePreloader, 1000);
             campusField.value = fileData.campus;
             citationField.value = fileData.citation;
             drive_linkField.value =fileData.drive_link;
+            tagsField.value =fileData.tags;
+            privacyField.value =fileData.privacy;
 
             const bsModal = new bootstrap.Modal(editModal);
             bsModal.show();

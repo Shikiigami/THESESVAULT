@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\history;
 use App\Models\User;
 use App\Models\view;
-use App\Models\auditLog;
+use App\Models\AuditLog;
 use App\Models\AuditTrail;
 use App\Models\download;
 
@@ -33,7 +33,7 @@ class AuditTrailController extends Controller
         // ->orderBy('created_at', 'DESC')
         // ->paginate($paginateDownload);
 
-        $logs = auditLog::select('adminId', 'admin_action','research','action_date')
+        $logs = AuditLog::select('adminId', 'admin_action','research','action_date')
         ->orderBy('created_at', 'DESC')
         ->paginate(10); 
 

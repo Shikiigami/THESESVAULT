@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\recentLogin;
 
 class LoginController extends Controller
 {
@@ -37,6 +38,11 @@ class LoginController extends Controller
     public function index(){
         return view('auth.login');
     }
+    
+    
+    public function adminIndex(){
+        return view('auth.admin-login');
+    }
     public function logout(Request $request)
     {
         /**
@@ -54,6 +60,12 @@ class LoginController extends Controller
     protected function authenticated(Request $request, $user)
     {
         $user->update(['status' => 'active', 'last_login' => now()]);
+        
+        $recentLogin = new recentLogin();
+        $recentLogin->idUser = $user->id;
+        $recentLogin->login_time = now();
+        $recentLogin->save();
+        
         return redirect()->intended($this->redirectPath());
     }
     

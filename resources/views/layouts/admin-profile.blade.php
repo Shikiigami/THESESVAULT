@@ -112,7 +112,7 @@ setTimeout(hidePreloader, 1000);
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
             <img src="{{ Auth::user()->profile_picture ? asset('storage/pictures/' . Auth::user()->profile_picture) : asset('img/null-profile.png') }}" alt="Profile Picture" class="rounded-circle">
-              <h2>{{ Auth::user()->name }}</h2> <span>({{ Auth::user()->role }})</span>
+             <h2>{{ Auth::user()->name }}</h2><span>{{ Auth::user()->college ? Auth::user()->college->college_name : '' }} - ({{ Auth::user()->role }})</span>
               <h3>{{ Auth::user()->email }}</h3>
             </div>
           </div>
@@ -130,9 +130,11 @@ setTimeout(hidePreloader, 1000);
                   <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
                 </li>
 
+             @if (auth()->check() && auth()->user()->role === 'admin')
               <li class="nav-item">
                   <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
               </li>
+              @endif
 
                 <li class="nav-item">
                   <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
@@ -156,7 +158,13 @@ setTimeout(hidePreloader, 1000);
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">College</div>
-                    <div class="col-lg-9 col-md-8">{{ Auth::user()->college->college_name ?? 'No College' }}</div>
+                    <div class="col-lg-9 col-md-8">
+                      @if (Auth::user()->college)
+                          {{ in_array(Auth::user()->college->college_name, $campusCollege) ? Auth::user()->college->college_name . ' Campus' : Auth::user()->college->college_name }}
+                      @else
+                          No College
+                      @endif
+                  </div>
                   </div>
 
                   <div class="row">
@@ -229,12 +237,21 @@ function displaySelectedImage(input) {
     <label for="college" class="col-md-4 col-lg-3 col-form-label">College</label>
     <div class="col-md-8 col-lg-9">
       <select class="form-control" name="college_id" id="collegeSelect">
-        @if (Auth::user()->college)
-            <option value="{{ Auth::user()->college->id }}" selected>{{ Auth::user()->college->college_name }}</option>
-        @else
-            <option value="" selected>No College</option>
-        @endif
-    </select>
+          @if (Auth::user()->college)
+              @php
+                  $collegeName = Auth::user()->college->college_name;
+              @endphp
+              <option value="{{ Auth::user()->college->id }}" selected>
+                  @if(in_array($collegeName, $campusCollege))
+                  {{ $collegeName }} Campus
+                  @else
+                      {{ $collegeName }}
+                  @endif
+              </option>
+          @else
+              <option value="" selected>No College</option>
+          @endif
+      </select>
     </div>
 </div>
 <div class="row mb-3">
@@ -248,41 +265,217 @@ function displaySelectedImage(input) {
                   </select>
         </div>
     </div>
-<script>
-    $(document).ready(function () {
-        $.ajax({
-            url: "{{ route('edit.profile') }}",
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                var select = $('#collegeSelect');
-                $.each(data, function (key, value) {
-                    select.append('<option value="' + value.id + '">' + value.college_name + '</option>');
-                });
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                console.error('Error fetching colleges: ' + errorThrown);
-            }
+
+    <script>
+        $(document).ready(function () {
+            // Make an AJAX request to fetch colleges
+            $.ajax({
+                url: "{{ route('user-edit.profile') }}",
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    // Populate the select element with fetched data
+                    var select = $('#collegeSelect');
+                    $.each(data, function (key, value) {
+                        select.append('<option value="' + value.id + '">' + value.college_name + '</option>');
+                    });
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error fetching colleges: ' + errorThrown);
+                }
+            });
         });
-    });
-</script>
-    <div class="row mb-3">
-        <label for="program" class="col-md-4 col-lg-3 col-form-label">Program</label>
-        <div class="col-md-8 col-lg-9">
-        <select class="form-control" name="program" value="{{ Auth::user()->program }}"  >
-                    <option value="BS Information Technology">BS Information Technology</option>
-                    <option value="BS Computer Science">BS Computer Science</option>
-                    <option value="BS Medical Biology">BS Medical Biology</option>
-                    <option value="BS Environmental Science">BS Environmental Science</option>
-                    <option value="BS Marine Biology">BS Marine Biology</option>
-                    <option value="BS Civil Engineering">BS Civil Engineering</option>
-                    <option value="BS Mechanical Engineering">BS Mechanical Engineering</option>
-                    <option value="BS Petroleum Engineering">BS Petroleum Engineering</option>
-                    <option value="BS Electrical Engineering">BS Electrical Engineering</option>
-                    <option value="BS Architecture">BS Architecture</option>
-                  </select>
-              </div>
-          </div>
+    </script>
+    <div class="row mb-3" id="programSelection">
+      <!-- Program selection -->
+      <label for="program" class="col-md-4 col-lg-3 col-form-label">Program</label>
+      <div class="col-md-8 col-lg-9">
+          <select class="form-control" name="program" id="program">
+              <!-- Options will be populated dynamically based on the selected college -->
+          </select>
+      </div>
+    </div>
+    
+    <script>
+      $('#collegeSelect').change(function() {
+          var selectedCollege = $(this).val();
+          var programSelect = $('#program');
+    
+          programSelect.empty();
+    
+          if (selectedCollege === '131') {
+              addProgramOptions(programSelect, [
+                  "BS Information Technology",
+                  "BS Computer Science",
+                  "BS Medical Biology",
+                  "BS Environmental Science",
+                  "BS Marine Biology"
+              ]);
+          } else if (selectedCollege === '130') {
+              addProgramOptions(programSelect, [
+                  "BS Civil Engineering",
+                  "BS Mechanical Engineering",
+                  "BS Petroleum Engineering",
+                  "BS Electrical Engineering",
+                  "BS Architecture"
+              ]);
+          } else if (selectedCollege === '138') {
+                addProgramOptions(programSelect, [
+                    "BS Business Administration",
+                    "BS Entrepreneurship"
+    
+                ]);
+            } else if (selectedCollege === '139') {
+                addProgramOptions(programSelect, [
+                    "BS Agriculture",
+                    "BS Entrepreneurship",
+                    "B Elementary Education"
+                ]);
+            } else if (selectedCollege === '140') {
+                addProgramOptions(programSelect, [
+                    "BS Business Administration",
+                    "BS Agriculture",
+                    "BS Entrepreneurship",
+                    "BS Information Technology",
+                    "B Elementary Education"
+                    
+                ]);
+            } else if (selectedCollege === '141') {
+                addProgramOptions(programSelect, [
+                    "B Secondary Education",
+                    "BS Businiess Administration",
+                    "BS Entrepreneurship",
+                    "BS Agriculture",
+                    "B Elementary Education"
+                    
+                ]);
+            } else if (selectedCollege === '142') {
+                addProgramOptions(programSelect, [
+                    "BS Criminology",
+                    "BS Business Administration",
+                    "BS Hospitality Management",
+                    "BS Tourism Management",
+                    "B Elementary Education",
+                    "B Secondary Education"
+                    
+                ]);
+            } else if (selectedCollege === '143') {
+                addProgramOptions(programSelect, [
+                    "BA Political Science",
+                    "B Industial Technology",
+                    "BS Criminology",
+                    "BS Business Administration",
+                    "BS Entrepreneurship",
+                    "BS Hospitality Management",
+                    "BS Tourism Management",
+                    "B Elementary Education",
+                    "B Secondary Education",
+                    "BT Vocational Teacher Education"
+                    
+                ]);
+            }  else if (selectedCollege === '144') {
+                addProgramOptions(programSelect, [
+                    "BS Agriculture",
+                    "BS Entrepreneurship"
+                    
+                ]);
+            } else if (selectedCollege === '145') {
+                addProgramOptions(programSelect, [
+                    "BS Criminology",
+                    "BS Entrepreneurship",
+                    "BS Hospitality Management",
+                    "BS Tourism Management"
+                    
+                ]);
+            } else if (selectedCollege === '146') {
+                addProgramOptions(programSelect, [
+                    "BS Tourism Management",
+                    "BS Fisheries"
+                    
+                ]);
+            } else if (selectedCollege === '147') {
+                addProgramOptions(programSelect, [
+                    "BA Political Science",
+                    "BS Criminology",
+                    "BS Business Administration",
+                    "BS Entrepreneurship",
+                    "BS Hospitality Management",
+                    "BS Tourism Management",
+                    "B Elementary Education",
+                    "BS Agriculture",
+                    "BS Computer Science "
+                    
+                ]);
+            } else if (selectedCollege === '148') {
+                addProgramOptions(programSelect, [
+                    "BS Business Administration",
+                    "BS Entrepreneurship",
+                    "BS Hospitality Management",
+                    "BS Tourism Management",
+                    "BS Agriculture",
+                    "BS Information Technology",
+                    "B Elementary Education",
+                    "B Secondary Education"
+                ]);
+            } else if (selectedCollege === '149') {
+                addProgramOptions(programSelect, [
+                    "BS Agriculture",
+                    "BS Computer Science",
+                    "BS Entrepreneurship",
+                    "BS Environmental Science"
+                ]);
+            } else if (selectedCollege === '150') {
+                addProgramOptions(programSelect, [
+                    "B Elementary Education",
+                    "B Secondary Education",
+                    "BS Business Administration",
+                    "BS Criminology",
+                    "BS Hospitality Management"
+                ]);
+            } else if (selectedCollege === '151') {
+                addProgramOptions(programSelect, [
+                    "B Elementary Education",
+                    "BS Agriculture",
+                    "BS Entrepreneurship",
+                    "BS Hospitality Management"
+                ]);
+            } 
+            else if (selectedCollege === '152') {
+                addProgramOptions(programSelect, [
+                    "BA Political Science",
+                    "BS Computer Science",
+                    "BS Entrepreneurship",
+                    "BS Environmental Science",
+                    "BS Tourism Management"
+                ]);
+            } else if (selectedCollege === '153') {
+                addProgramOptions(programSelect, [
+                    "B Elementary Education",
+                    "B Secondary Education",
+                    "BS Business Administration",
+                    "BS Entrepreneurship",
+                    "BS Agriculture"
+                ]);
+            } else if (selectedCollege === '154') {
+                addProgramOptions(programSelect, [
+                    "BS Business Administration",
+                    "BS Hospitality Management",
+                    "BS Information Technology"
+                ]);
+            }
+    
+      });
+    
+      function addProgramOptions(selectElement, programs) {
+          programs.forEach(function(program) {
+              selectElement.append($('<option>', {
+                  value: program,
+                  text: program
+              }));
+          });
+      }
+    </script>
+
         <div class="text-center">
             <button type="submit" id="submit" name="submit" class="btn btn-primary">Save Changes</button>
         </div>

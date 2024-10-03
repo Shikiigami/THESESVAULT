@@ -9,6 +9,7 @@ use App\Models\history;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log; 
 
+
 class SearchController extends Controller
 {
 

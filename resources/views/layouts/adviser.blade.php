@@ -123,7 +123,7 @@ setTimeout(hidePreloader, 1000);
                             <img src="{{ asset('img/null-profile.png') }}" alt="Default Photo" width="50" height="50">
                         @endif
                 </td>
-                <td scope="row"><a href="#" data-bs-toggle="modal" data-bs-target="#adviserModal{{$adviser->adviserId}}">{{ $adviser->adviser_name }}</a></td>
+                <td scope="row" class="text-dark">{{ $adviser->adviser_name }}</td>
                 <div class="modal fade" id="adviserModal{{$adviser->adviserId}}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered modal-m">
                             <div class="modal-content">
@@ -153,7 +153,7 @@ setTimeout(hidePreloader, 1000);
                         </div>
                     </div>
                 <td scope="row">{{ $adviser->college_aid->college_name }}</td>
-                <td scope="row">{{ $adviser->adviser_count }}</td>
+                <td scope="row"><a href="#" data-bs-toggle="modal" data-bs-target="#adviserModal{{$adviser->adviserId}}"><span class="badge bg-primary"><i class="bi bi-collection me-1"></i> {{ $adviser->adviser_count }}</span></a></td>
                 <td style="vertical-align: middle!important;text-align: center;  ">
                     <div style="display: inline-flex; gap: 5px; justify-content: center;">
                     <a href="#" class="btn btn-warning btn-sm edit-modal-trigger" data-file="{{ json_encode($adviser) }}" data-target="#editModal_{{ $adviser->adviserId }}"><i class="bi bi-pencil-square"></i></a>

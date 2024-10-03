@@ -5,8 +5,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use App\Models\recentLogin;
+
 
 class ReportController extends Controller
 {
@@ -21,7 +23,7 @@ class ReportController extends Controller
         $myresults = DB::select($myquery);
 
         // Create a PDF view
-        $pdf = PDF::loadView('pdf.report', compact('myresults'));
+        $pdf = Pdf::loadView('pdf.report', compact('myresults'));
 
         // Set the response headers for downloading the PDF file
         $headers = [
@@ -32,33 +34,33 @@ class ReportController extends Controller
         // Return the PDF response
         return $pdf->stream('report.pdf');
     }
-    public function generatePiePDF()
-    {
-        $piequery = "SELECT research.program as 'Program', COUNT(DISTINCT research.id) as 'TotalResearch_Count' FROM research
-                 GROUP BY research.program ORDER BY 'TotalResearch_Count' DESC";
-    
-        $pieResults = DB::select($piequery);
-        $count_research = [];
-        $label_program = [];
-    
-        if (count($pieResults) > 0) {
-            foreach ($pieResults as $pierow) {
-                $count_research[] = $pierow->{'TotalResearch_Count'};
-                $label_program[] = $pierow->{'Program'};
-            }
-        } else {
-            return "No records matching your query were found.";
+   public function generatePiePDF()
+{
+    $piequery = "SELECT research.program as 'Program', COUNT(DISTINCT research.id) as 'TotalResearch_Count' FROM research
+             GROUP BY research.program ORDER BY 'TotalResearch_Count' DESC";
+
+    $pieResults = DB::select($piequery);
+    $count_research = [];
+    $label_program = [];
+
+    if (count($pieResults) > 0) {
+        foreach ($pieResults as $pierow) {
+            $count_research[] = $pierow->{'TotalResearch_Count'};
+            $label_program[] = $pierow->{'Program'};
         }
-    
-        $pdf = PDF::loadView('pdf.pie_report', compact('count_research', 'label_program'));
-    
-        $headers = [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="pie_report.pdf"',
-        ];
-    
-        return $pdf->stream('pie_report.pdf');
+    } else {
+        return "No records matching your query were found.";
     }
+
+    $pdf = Pdf::loadView('pdf.pie_report', compact('count_research', 'label_program'));
+
+    $headers = [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'attachment; filename="pie_report.pdf"',
+    ];
+
+    return $pdf->stream('pie_report.pdf', $headers);
+}
 
     public function generateCollegeReportDate(Request $request){
 
@@ -75,7 +77,7 @@ class ReportController extends Controller
     $myresults = DB::select($myquery, ['start_date' => $start_date, 'end_date' => $end_date]);
 
     // Create a PDF view
-    $pdf = PDF::loadView('pdf.report-collegeDate', compact('myresults','start_date','end_date'));
+    $pdf = Pdf::loadView('pdf.report-collegeDate', compact('myresults','start_date','end_date'));
 
     // Set the response headers for downloading the PDF file
     $headers = [
@@ -111,7 +113,7 @@ class ReportController extends Controller
             return "No records matching your query were found.";
         }
     
-        $pdf = PDF::loadView('pdf.report-programDate', compact('count_research', 'label_program', 'start_date', 'end_date'));
+        $pdf = Pdf::loadView('pdf.report-programDate', compact('count_research', 'label_program', 'start_date', 'end_date'));
     
         $headers = [
             'Content-Type' => 'application/pdf',
@@ -120,6 +122,62 @@ class ReportController extends Controller
     
         return $pdf->stream('program-reportDate.pdf');
     }
+    
+    
+      public function generateLoginPDF(Request $request)
+{
+    $year = $request->input('year');
+    $month = $request->input('month');
+
+    $logins = recentLogin::select('users.program', DB::raw('COUNT(*) as login_count'))
+        ->join('users', 'recent_login.idUser', '=', 'users.id')
+        ->whereYear('login_time', $year)
+        ->whereMonth('login_time', $month)
+        ->where('users.role', '=', 'user')
+        ->groupBy('users.program')
+        ->orderByDesc('login_count')
+        ->get();
+
+    $pdf = Pdf::loadView('pdf.loginProgram-report', compact('logins', 'year', 'month'));
+    return $pdf->stream('login_reportByMonth.pdf');
+}
+
+public function generateLoginYearPDF(Request $request)
+{
+    $year = $request->input('year');
+
+    $logins = recentLogin::select('users.program', DB::raw('COUNT(*) as login_count'))
+        ->join('users', 'recent_login.idUser', '=', 'users.id')
+        ->whereYear('login_time', $year)
+        ->where('users.role', '=', 'user')
+        ->groupBy('users.program')
+        ->orderByDesc('login_count')
+        ->get();
+
+    $pdf = Pdf::loadView('pdf.loginProgramYear-report', compact('logins', 'year'));
+    return $pdf->stream('login_reportByYear.pdf');
+}
+
+public function generateLoginDayPDF(Request $request)
+{
+    $day = $request->input('day');
+    $currentMonth = date('m');
+    $currentYear = date('Y');
+
+    $logins = RecentLogin::select('users.program', DB::raw('COUNT(*) as login_count'))
+        ->join('users', 'recent_login.idUser', '=', 'users.id')
+        ->whereDay('login_time', $day)
+        ->whereMonth('login_time', $currentMonth)
+        ->whereYear('login_time', $currentYear)
+        ->where('users.role', 'user')
+        ->groupBy('users.program')
+        ->orderByDesc('login_count')
+        ->get();
+
+    $pdf = Pdf::loadView('pdf.loginProgramDay-report', compact('logins', 'day', 'currentMonth', 'currentYear'));
+    return $pdf->stream('login_reportByDay.pdf');
+}
+    
     
 }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
+use App\Models\college;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -12,7 +13,7 @@ class CreateAdminController extends Controller
 {
     public function store(Request $request){
 
-        $validator = Validator::make($request->all(), [
+    $validator = Validator::make($request->all(), [
     'admin_name' => 'required|string',
     'admin_email' => [
         'required',
@@ -45,13 +46,14 @@ class CreateAdminController extends Controller
     $admin = new User();
     $admin->name = $request->input('admin_name');
     $admin->email = $request->input('admin_email');
-    $admin->role = 'admin';
+    $admin->role = $request->input('admin_role');
+    $admin->college_id = $request->input('admin_college');
     $admin->last_login = now();
     $admin->password = Hash::make($request->input('admin_password'));
     
     if ($request->has('submit')) {
         $admin->save();
-        $admin->sendEmailVerificationNotification(); // Sending verification email
+        $admin->sendEmailVerificationNotification(); 
     
         return redirect()->back()->with('success', 'Admin added successfully! Verification email sent.');
     }  

@@ -60,6 +60,7 @@ class ProfileController extends Controller
         }
     
         $user->save();
+        
 
     $changes = [];
     
@@ -129,5 +130,5 @@ class ProfileController extends Controller
     public function logout(){
         return view('auth.login');
        }
-
+ 
 }

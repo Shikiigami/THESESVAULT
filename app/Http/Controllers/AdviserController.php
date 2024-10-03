@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Adviser;
 use App\Models\research;
-use App\Models\College;
+use App\Models\college;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Validator;
@@ -112,6 +112,21 @@ public function destroy(string $adviserId)
         $adviser = Adviser::findOrFail($adviserId);
             $adviser->delete();
             return redirect()->back()->with('success', 'Adviser deleted successfully');
+    }
+    
+     public function filterAdvisers(Request $request)
+    {
+        $inputValue = $request->input('adviser');
+        $advisers = Adviser::where('adviser_name', 'like', '%' . $inputValue . '%')->get();
+        return response()->json($advisers);
+    }
+
+    public function filter(Request $request)
+    {
+      
+        $input = $request->input('input');
+        $advisers = Adviser::where('adviser_name', 'like', '%' . $input . '%')->get();
+        return response()->json($advisers);
     }
 
 }

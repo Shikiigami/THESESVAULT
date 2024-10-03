@@ -1282,3 +1282,12 @@ h6 {
 .clipboardIcon:hover {
   transform: scale(1.2);
 }
+.citationContainer {
+  text-align: justify;
+  margin: 0;
+}
+
+.citationCode {
+  width: auto;
+  text-align: justify;
+}

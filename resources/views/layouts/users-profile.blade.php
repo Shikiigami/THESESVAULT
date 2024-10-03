@@ -156,7 +156,17 @@ setTimeout(hidePreloader, 1000);
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">College</div>
-                    <div class="col-lg-9 col-md-8">{{ Auth::user()->college->college_name ?? 'No College' }}</div>
+                    <div class="col-lg-9 col-md-8">
+                      @php
+                          $collegeName = Auth::user()->college->college_name ?? 'No College';
+                      @endphp
+                  
+                      @if ($collegeName !== 'No College' && in_array($collegeName, $campusCollege))
+                          {{ $collegeName . ' Campus' }}
+                      @else
+                          {{ $collegeName }}
+                      @endif
+                  </div>
                   </div>
 
                   <div class="row">
@@ -224,27 +234,37 @@ function displaySelectedImage(input) {
     <div class="row mb-3">
     <label for="college" class="col-md-4 col-lg-3 col-form-label">College</label>
     <div class="col-md-8 col-lg-9">
-        <select class="form-control" name="college_id" id="collegeSelect">
-            @if (Auth::user()->college)
-                <option value="{{ Auth::user()->college->id }}" selected>{{ Auth::user()->college->college_name }}</option>
-            @else
-                <option value="" selected>No College</option>
-            @endif
-        </select>
+      <select class="form-control" name="college_id" id="collegeSelect">
+          @if (Auth::user()->college)
+              @php
+                  $collegeName = Auth::user()->college->college_name;
+              @endphp
+              <option value="{{ Auth::user()->college->id }}" selected>
+                  @if(in_array($collegeName, $campusCollege))
+                  {{ $collegeName }} Campus
+                  @else
+                      {{ $collegeName }}
+                  @endif
+              </option>
+          @else
+              <option value="" selected>No College</option>
+          @endif
+      </select>
     </div>
 </div>
 
 <div class="row mb-3">
-        <label for="program" class="col-md-4 col-lg-3 col-form-label">Interest</label>
-        <div class="col-md-8 col-lg-9">
-        <select class="form-control" name="interest" value="{{ Auth::user()->interest }}"  >
-                    <option value="{{ Auth::user()->interest }}">{{ Auth::user()->interest }}</option>
-                    <option value="Business">Business</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Education">Education</option>
-                  </select>
-        </div>
-    </div>
+  <label for="interest" class="col-md-4 col-lg-3 col-form-label">Interest</label>
+  <div class="col-md-8 col-lg-9">
+      <select class="form-control" name="interest" >
+        <option value="{{ Auth::user()->interest }}" selected disabled >{{ Auth::user()->interest }}</option>
+          @foreach($enumValues as $value)
+              <option value="{{ $value }}">{{ $value }}</option>
+          @endforeach
+      </select>
+  </div>
+</div>
+
 <script>
     $(document).ready(function () {
         // Make an AJAX request to fetch colleges
@@ -286,9 +306,9 @@ function displaySelectedImage(input) {
           addProgramOptions(programSelect, [
               "BS Information Technology",
               "BS Computer Science",
-              "BS Medical Biology",
+              "BSB Major in Medical Biology",
               "BS Environmental Science",
-              "BS Marine Biology"
+              "BSB Major in Marine Biology"
           ]);
       } else if (selectedCollege === '130') {
           addProgramOptions(programSelect, [
@@ -298,7 +318,210 @@ function displaySelectedImage(input) {
               "BS Electrical Engineering",
               "BS Architecture"
           ]);
-      }
+      }else if (selectedCollege === '132') {
+          addProgramOptions(programSelect, [
+            "BS Accountancy",
+            "BS Business Administration",
+            "BS Entrepreneurship",
+            "BS Management Accounting",
+            "BS Public Administration"
+          ]);
+      }else if (selectedCollege === '133') {
+          addProgramOptions(programSelect, [
+            "BS Nursing",
+            "Diploma in Midwifery"
+          ]);
+      }else if (selectedCollege === '134') {
+          addProgramOptions(programSelect, [
+            "B Elementary Education",
+            "B Physical Education",
+            "B Secondary Education"
+          ]);
+      }else if (selectedCollege === '135') {
+          addProgramOptions(programSelect, [
+            "BS Criminology"
+          ]);
+      }else if (selectedCollege === '136') {
+          addProgramOptions(programSelect, [
+            "BS Hospitality Management",
+            "BS Tourism Management"
+          ]);
+      }else if (selectedCollege === '137') {
+          addProgramOptions(programSelect, [
+            "BA Communication",
+            "BA Philippine Studies",
+            "BA Political Science",
+            "BS Psychology",
+            "BS Social Work"
+          ]);
+      }else if (selectedCollege === '138') {
+            addProgramOptions(programSelect, [
+                "BS Business Administration",
+                "BS Entrepreneurship"
+
+            ]);
+        } else if (selectedCollege === '139') {
+            addProgramOptions(programSelect, [
+                "BS Agriculture",
+                "BS Entrepreneurship",
+                "B Elementary Education"
+            ]);
+        } else if (selectedCollege === '140') {
+            addProgramOptions(programSelect, [
+                "BS Business Administration",
+                "BS Agriculture",
+                "BS Entrepreneurship",
+                "BS Information Technology",
+                "B Elementary Education"
+                
+            ]);
+        } else if (selectedCollege === '141') {
+            addProgramOptions(programSelect, [
+                "B Secondary Education",
+                "BS Businiess Administration",
+                "BS Entrepreneurship",
+                "BS Agriculture",
+                "B Elementary Education"
+                
+            ]);
+        } else if (selectedCollege === '142') {
+            addProgramOptions(programSelect, [
+                "BS Criminology",
+                "BS Business Administration",
+                "BS Hospitality Management",
+                "BS Tourism Management",
+                "B Elementary Education",
+                "B Secondary Education"
+                
+            ]);
+        } else if (selectedCollege === '143') {
+            addProgramOptions(programSelect, [
+                "BA Political Science",
+                "B Industial Technology",
+                "BS Criminology",
+                "BS Business Administration",
+                "BS Entrepreneurship",
+                "BS Hospitality Management",
+                "BS Tourism Management",
+                "B Elementary Education",
+                "B Secondary Education",
+                "BT Vocational Teacher Education"
+                
+            ]);
+        }  else if (selectedCollege === '144') {
+            addProgramOptions(programSelect, [
+                "BS Agriculture",
+                "BS Entrepreneurship"
+                
+            ]);
+        } else if (selectedCollege === '145') {
+            addProgramOptions(programSelect, [
+                "BS Criminology",
+                "BS Entrepreneurship",
+                "BS Hospitality Management",
+                "BS Tourism Management"
+                
+            ]);
+        } else if (selectedCollege === '146') {
+            addProgramOptions(programSelect, [
+                "BS Tourism Management",
+                "BS Fisheries"
+                
+            ]);
+        } else if (selectedCollege === '147') {
+            addProgramOptions(programSelect, [
+                "BA Political Science",
+                "BS Criminology",
+                "BS Business Administration",
+                "BS Entrepreneurship",
+                "BS Hospitality Management",
+                "BS Tourism Management",
+                "B Elementary Education",
+                "BS Agriculture",
+                "BS Computer Science "
+                
+            ]);
+        } else if (selectedCollege === '148') {
+            addProgramOptions(programSelect, [
+                "BS Business Administration",
+                "BS Entrepreneurship",
+                "BS Hospitality Management",
+                "BS Tourism Management",
+                "BS Agriculture",
+                "BS Information Technology",
+                "B Elementary Education",
+                "B Secondary Education"
+            ]);
+        } else if (selectedCollege === '149') {
+            addProgramOptions(programSelect, [
+                "BS Agriculture",
+                "BS Computer Science",
+                "BS Entrepreneurship",
+                "BS Environmental Science"
+            ]);
+        } else if (selectedCollege === '150') {
+            addProgramOptions(programSelect, [
+                "B Elementary Education",
+                "B Secondary Education",
+                "BS Business Administration",
+                "BS Criminology",
+                "BS Hospitality Management"
+            ]);
+        } else if (selectedCollege === '151') {
+            addProgramOptions(programSelect, [
+                "B Elementary Education",
+                "BS Agriculture",
+                "BS Entrepreneurship",
+                "BS Hospitality Management"
+            ]);
+        } 
+        else if (selectedCollege === '152') {
+            addProgramOptions(programSelect, [
+                "BA Political Science",
+                "BS Computer Science",
+                "BS Entrepreneurship",
+                "BS Environmental Science",
+                "BS Tourism Management"
+            ]);
+        } else if (selectedCollege === '153') {
+            addProgramOptions(programSelect, [
+                "B Elementary Education",
+                "B Secondary Education",
+                "BS Business Administration",
+                "BS Entrepreneurship",
+                "BS Agriculture"
+            ]);
+        } else if (selectedCollege === '154') {
+            addProgramOptions(programSelect, [
+                "BS Business Administration",
+                "BS Hospitality Management",
+                "BS Information Technology"
+            ]);
+        }
+        else if (selectedCollege === '155') {
+            addProgramOptions(programSelect, [
+                "Diploma in Teaching",
+                "Doctor of Education",
+                "Master of Arts in Education",
+                "Master of Arts in Teaching",
+                "Master of Arts in Literature",
+                "Master of Arts in Management",
+                "Master in Business Administration",
+                "Master of Science in Technopreneurship",
+                "Master of Science in Environmental Management",
+                "Master of Science in Nursing "
+            ]);
+        }
+        else if (selectedCollege === '156') {
+            addProgramOptions(programSelect, [
+                "Doctor of Medicine"
+            ]);
+        }
+        else if (selectedCollege === '157') {
+            addProgramOptions(programSelect, [
+                "Juris Doctor"
+            ]);
+        }
   });
 
   function addProgramOptions(selectElement, programs) {

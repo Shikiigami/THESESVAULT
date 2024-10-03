@@ -33,7 +33,7 @@ $query = "SELECT
     filename AS `File Name`,
     COUNT(DISTINCT userview_id) AS `User Count`
     FROM
-    `VIEW` 
+    `view` 
     WHERE
     :user_college_id = research_college
     GROUP BY

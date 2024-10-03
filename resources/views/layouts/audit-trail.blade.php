@@ -84,7 +84,7 @@ setTimeout(hidePreloader, 1000);
             <div class="card-body">
               <h5 class="card-title">Users View Footprints</h5>
 
-              <!-- Table with hoverable rows -->
+               <div class="table-responsive">
               <table class="table datatable">
                 <thead>
                   <tr>
@@ -99,7 +99,15 @@ setTimeout(hidePreloader, 1000);
                     <tr>
                         <td scope="row">{{ \Carbon\Carbon::parse($view->viewed_at)->format('F j, Y') }}</td>
                         <td scope="row">{{$view->user->name}}</td>
-                        <td scope="row">{{$view->filename}}</td>
+                        <td scope="row"> <?php
+                          $filename = pathinfo($view->filename, PATHINFO_FILENAME);
+                          if (strlen($filename) > 44) {
+                              $truncatedFilename = substr($filename, 0, 44) . '...';
+                              echo htmlspecialchars($truncatedFilename);
+                          } else {
+                              echo htmlspecialchars($filename);
+                          }
+                          ?></td>
                         <td scope="row">
                         @if($view->user->status === 'Active')
                         <span class="badge bg-success">{{ $view->user->status }}</span>
@@ -111,6 +119,7 @@ setTimeout(hidePreloader, 1000);
                 @endforeach
           </tbody>
         </table>
+         </div>
         {{ $views->links('vendor.pagination.default') }}
       </div>
     </div>
@@ -121,11 +130,12 @@ setTimeout(hidePreloader, 1000);
               <div class="card-body">
                 <h5 class="card-title">Admin Actions</h5>
   
-                <!-- Table with hoverable rows -->
+                 <div class="table-responsive">
                 <table class="table datatable">
                   <thead>
                     <tr>
                       <th scope="col">Admin Name</th>
+                      <th scope="col">Admin Role</th>
                       <th scope="col">Action</th>
                       <th scope="col">Research Filename</th>
                       <th scope="col">Action Date</th>
@@ -135,9 +145,23 @@ setTimeout(hidePreloader, 1000);
                     @if(isset($logs) && count($logs) > 0)
                     @foreach ($logs as $log)
                         <tr>
-                          <td scope="row">{{ $log->admin->name }}</td>
+                            <td scope="row">{{ $log->admin->name }}</td>
+                            <td scope="row">
+                              @if($log->admin->college)
+                                  {{ $log->admin->college->college_name }}-
+                              @endif
+                              {{ $log->admin->role }}
+                          </td>                          
                             <td scope="row">{{ $log->admin_action }}</td>
-                            <td scope="row">{{ $log->research}}</td>
+                            <td scope="row"> <?php
+                          $filename = pathinfo($log->research, PATHINFO_FILENAME);
+                          if (strlen($filename) > 44) {
+                              $truncatedFilename = substr($filename, 0, 44) . '...';
+                              echo htmlspecialchars($truncatedFilename);
+                          } else {
+                              echo htmlspecialchars($filename);
+                          }
+                          ?></td>
                             <td scope="row">{{ \Carbon\Carbon::parse($log->action_date)->format('F j, Y  H:i:s') }}</td>
                         </tr>
                     @endforeach
@@ -148,6 +172,7 @@ setTimeout(hidePreloader, 1000);
                 @endif
             </tbody>
           </table>
+          </div>
         </div>
       </div>
       </div>

@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('adviser');
             $table->enum('fieldname', ['Business', 'Technology', 'Education']);
             $table->timestamps();
+
+            $table->unsignedBigInteger('parent_id')->nullable(); // Assuming parent_id can be nullable
+            $table->foreign('parent_id')->references('id')->on('parents')->onDelete('cascade'); // Foreign key constraint
         });
     }
 

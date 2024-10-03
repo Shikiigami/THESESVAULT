@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "barryvdh/laravel-dompdf": "^2.0",
         "fnsc/laravel-google-drive": "^1.2",
         "google/apiclient": "2.15.1",

@@ -69,40 +69,92 @@
                       </div>
                   @endif
               @enderror
-          </div>    
-          <select class="input" id="college" name="college" aria-label=".form-select-sm example" value="{{ old('college') }}" required>
-            <option disabled selected>Choose College</option>
-            <option value="130">CEAT</option>
-            <option value="131">CS</option>
-        </select>
+          </div>
+          <div style="text-align: center;">
+            <select style=" border-radius: 23px; border: 1px solid #c0c0c0; outline: 0 !important; box-sizing: border-box; padding: 12px 15px;" class="form-select input" id="campusSelect" onchange="handleCampusChange(this)">
+                <option value="main">Main Campus</option>
+                <option value="ccrd">CCRD Campus</option>
+            </select>
+        </div>
+        
+        <div id="collegeSelect">
+            <select style=" border-radius: 23px; border: 1px solid #c0c0c0; outline: 0 !important; box-sizing: border-box; padding: 12px 15px;" class="form-select input" id="college" name="college" aria-label=".form-select-sm example" value="{{ old('college') }}" required>
+                <option disabled selected>Choose College</option>
+                <option value="130">CEAT</option>
+                <option value="131">CS</option>
+                <option value="132">CBA</option>
+                <option value="133">CNHS</option>
+                <option value="134">CTE</option>
+                <option value="135">CCJE</option>
+                <option value="136">CHTM</option>
+                <option value="137">CAH</option>
+            </select>
+        </div>
+        
+        <div id="ccrdSelect" style="display: none;">
+            <select  style=" border-radius: 23px; border: 1px solid #c0c0c0; outline: 0 !important; box-sizing: border-box; padding: 12px 15px;" class="form-select input" id="ccrdCollege" name="college" aria-label=".form-select-sm example" value="{{ old('ccrdCollege') }}" required>
+                <option disabled selected>Choose CCRD Campus</option>
+                <option value="138">Araceli Campus</option>
+                <option value="139">Balabac Campus</option>
+                <option value="140">Bataraza Campus</option>
+                <option value="141">Brooke's Point Campus</option>
+                <option value="142">Coron Campus</option>
+                <option value="143">PCAT Cuyo Campus</option>
+                <option value="144">Dumaran Campus</option>
+                <option value="145">El Nido Campus</option>
+                <option value="146">Linapacan Campus</option>
+                <option value="147">Narra Campus</option>
+                <option value="148">Quezon Campus</option>
+                <option value="149">Rizal Campus</option>
+                <option value="150">Roxas Campus</option>
+                <option value="151">San Rafael Campus</option>
+                <option value="152">San Vicente Campus</option>
+                <option value="153">Sofronio Española Campus</option>
+                <option value="154">Taytay Campus</option>
+            </select>
+        </div>
+        
         <div class="fixed-mtop-alert">
             @if ($errors->has('college'))
                 <div class="login-alert alert-danger alert-dismissible fade show falling-alert" role="alert">
-                <i class="bi bi-check-circle me-1"></i>
-                {{ $errors->first('college') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <i class="bi bi-check-circle me-1"></i>
+                    {{ $errors->first('college') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            </div>
-            <select class="input" id="Program" name="program" aria-label=".form-select-sm example" value="{{ old('program') }}" required>
-              <option disabled selected>Choose Program</option>
-          </select>
-          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-          <script>
-              $(document).ready(function() {
-                  $('#college').change(function() {
-                      var selectedCollege = $(this).val();
-                      var programSelect = $('#Program');
-                      programSelect.find('option').not(':first').remove();
-                      if (selectedCollege === '131') {
-                          addProgramOptions(programSelect, [
-                              "BS Information Technology",
-                              "BS Computer Science",
-                              "BS Medical Biology",
-                              "BS Environmental Science",
-                              "BS Marine Biology"
-                          ]);
-                      } else if (selectedCollege === '130') {
+        </div>
+        
+        <select style=" border-radius: 23px; border: 1px solid #c0c0c0; outline: 0 !important; box-sizing: border-box; padding: 12px 15px;" class="form-select input" id="Program" name="program" aria-label=".form-select-sm example" value="{{ old('program') }}" required>
+            <option disabled selected>Choose Program</option>
+        </select>
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function handleCampusChange(select) {
+                var selectedCampus = select.value;
+                if (selectedCampus === 'main') {
+                    $('#collegeSelect').show();
+                    $('#ccrdSelect').hide();
+                } else if (selectedCampus === 'ccrd') {
+                    $('#collegeSelect').hide();
+                    $('#ccrdSelect').show();
+                }
+            }
+        
+            $(document).ready(function() {
+                $('#college').change(function() {
+                    var selectedCollege = $(this).val();
+                    var programSelect = $('#Program');
+                    programSelect.find('option').not(':first').remove();
+                    if (selectedCollege === '131') {
+                        addProgramOptions(programSelect, [
+                            "BS Information Technology",
+                            "BS Computer Science",
+                            "BS Medical Biology",
+                            "BS Environmental Science",
+                            "BS Marine Biology"
+                        ]);
+                    }else if (selectedCollege === '130') {
                           addProgramOptions(programSelect, [
                               "BS Civil Engineering",
                               "BS Mechanical Engineering",
@@ -110,18 +162,208 @@
                               "BS Electrical Engineering",
                               "BS Architecture"
                           ]);
+                      } else if (selectedCollege === '132') {
+                          addProgramOptions(programSelect, [
+                              "BS Accountancy",
+                              "BS Business Administration",
+                              "BS Entrepreneurship",
+                              "BS Management Accounting",
+                              "BS Public Administration"
+                          ]);
+                      } else if (selectedCollege === '133') {
+                          addProgramOptions(programSelect, [
+                              "BS Nursing",
+                              "Diploma in Midwifery"
+                          ]);
+                      } else if (selectedCollege === '134') {
+                          addProgramOptions(programSelect, [
+                              "B Elementary Education",
+                              "B Physical Education",
+                              "B Secondary Education",
+                          ]);
                       }
-                  });
-                  function addProgramOptions(selectElement, programs) {
-                      programs.forEach(function(program) {
-                          selectElement.append($('<option>', {
-                              value: program,
-                              text: program
-                          }));
-                      });
-                  }
-              });
-          </script>
+                      else if (selectedCollege === '135') {
+                          addProgramOptions(programSelect, [
+                              "BS Criminology"
+                          ]);
+                      } else if (selectedCollege === '136') {
+                          addProgramOptions(programSelect, [
+                              "BS Hospitality Management",
+                              "BS Tourism Management",
+                          ]);
+                      } else if (selectedCollege === '137') {
+                          addProgramOptions(programSelect, [
+                              "BA Communication",
+                              "BA Philippine Studies",
+                              "BA Political Science",
+                              "BS Psychology",
+                              "BS Social Work",
+                          ]);
+                      }
+                    
+                });
+        
+                $('#ccrdCollege').change(function() {
+                    var selectedCcrdCollege = $(this).val();
+                    var programSelect = $('#Program');
+                    programSelect.find('option').not(':first').remove();
+                    if (selectedCcrdCollege === '138') {
+                        addProgramOptions(programSelect, [
+                            "BS Business Administration",
+                            "BS Entrepreneurship"
+
+                        ]);
+                    } else if (selectedCcrdCollege === '139') {
+                        addProgramOptions(programSelect, [
+                            "BS Agriculture",
+                            "BS Entrepreneurship",
+                            "B Elementary Education"
+                        ]);
+                    } else if (selectedCcrdCollege === '140') {
+                        addProgramOptions(programSelect, [
+                            "BS Business Administration",
+                            "BS Agriculture",
+                            "BS Entrepreneurship",
+                            "BS Information Technology",
+                            "B Elementary Education"
+                           
+                        ]);
+                    } else if (selectedCcrdCollege === '141') {
+                        addProgramOptions(programSelect, [
+                            "B Secondary Education",
+                            "BS Businiess Administration",
+                            "BS Entrepreneurship",
+                            "BS Agriculture",
+                            "B Elementary Education"
+                           
+                        ]);
+                    } else if (selectedCcrdCollege === '142') {
+                        addProgramOptions(programSelect, [
+                            "BS Criminology",
+                            "BS Business Administration",
+                            "BS Hospitality Management",
+                            "BS Tourism Management",
+                            "B Elementary Education",
+                            "B Secondary Education"
+                           
+                        ]);
+                    } else if (selectedCcrdCollege === '143') {
+                        addProgramOptions(programSelect, [
+                            "BA Political Science",
+                            "B Industial Technology",
+                            "BS Criminology",
+                            "BS Business Administration",
+                            "BS Entrepreneurship",
+                            "BS Hospitality Management",
+                            "BS Tourism Management",
+                            "B Elementary Education",
+                            "B Secondary Education",
+                            "BT Vocational Teacher Education"
+                           
+                        ]);
+                    }  else if (selectedCcrdCollege === '144') {
+                        addProgramOptions(programSelect, [
+                            "BS Agriculture",
+                            "BS Entrepreneurship"
+                           
+                        ]);
+                    } else if (selectedCcrdCollege === '145') {
+                        addProgramOptions(programSelect, [
+                            "BS Criminology",
+                            "BS Entrepreneurship",
+                            "BS Hospitality Management",
+                            "BS Tourism Management"
+                           
+                        ]);
+                    } else if (selectedCcrdCollege === '146') {
+                        addProgramOptions(programSelect, [
+                            "BS Tourism Management",
+                            "BS Fisheries"
+                           
+                        ]);
+                    } else if (selectedCcrdCollege === '147') {
+                        addProgramOptions(programSelect, [
+                            "BA Political Science",
+                            "BS Criminology",
+                            "BS Business Administration",
+                            "BS Entrepreneurship",
+                            "BS Hospitality Management",
+                            "BS Tourism Management",
+                            "B Elementary Education",
+                            "BS Agriculture",
+                            "BS Computer Science "
+                           
+                        ]);
+                    } else if (selectedCcrdCollege === '148') {
+                        addProgramOptions(programSelect, [
+                            "BS Business Administration",
+                            "BS Entrepreneurship",
+                            "BS Hospitality Management",
+                            "BS Tourism Management",
+                            "BS Agriculture",
+                            "BS Information Technology",
+                            "B Elementary Education",
+                            "B Secondary Education"
+                        ]);
+                    } else if (selectedCcrdCollege === '149') {
+                        addProgramOptions(programSelect, [
+                            "BS Agriculture",
+                            "BS Computer Science",
+                            "BS Entrepreneurship",
+                            "BS Environmental Science"
+                        ]);
+                    } else if (selectedCcrdCollege === '150') {
+                        addProgramOptions(programSelect, [
+                            "B Elementary Education",
+                            "B Secondary Education",
+                            "BS Business Administration",
+                            "BS Criminology",
+                            "BS Hospitality Management"
+                        ]);
+                    } else if (selectedCcrdCollege === '151') {
+                        addProgramOptions(programSelect, [
+                            "B Elementary Education",
+                            "BS Agriculture",
+                            "BS Entrepreneurship",
+                            "BS Hospitality Management"
+                        ]);
+                    } 
+                    else if (selectedCcrdCollege === '152') {
+                        addProgramOptions(programSelect, [
+                            "BA Political Science",
+                            "BS Computer Science",
+                            "BS Entrepreneurship",
+                            "BS Environmental Science",
+                            "BS Tourism Management"
+                        ]);
+                    } else if (selectedCcrdCollege === '153') {
+                        addProgramOptions(programSelect, [
+                            "B Elementary Education",
+                            "B Secondary Education",
+                            "BS Business Administration",
+                            "BS Entrepreneurship",
+                            "BS Agriculture"
+                        ]);
+                    } else if (selectedCcrdCollege === '154') {
+                        addProgramOptions(programSelect, [
+                            "BS Business Administration",
+                            "BS Hospitality Management",
+                            "BS Information Technology"
+                        ]);
+                    }
+
+                });
+        
+                function addProgramOptions(selectElement, programs) {
+                    programs.forEach(function(program) {
+                        selectElement.append($('<option>', {
+                            value: program,
+                            text: program
+                        }));
+                    });
+                }
+            });
+        </script>        
           <div class="fixed-mtop-alert">
           @if ($errors->has('program'))
               <div class="login-alert alert-danger alert-dismissible fade show falling-alert" role="alert">
@@ -200,28 +442,38 @@
                   <span style="margin-left: 5px;"><span>I agree to </span><a href="#" id="termsLink">Terms and Conditions</a></span>
                 </label>
               </p>
-         <script>
+              <script>
                 const modal = document.getElementById('myModal');
                 const checkbox = document.getElementById('invalidCheck2');
                 const termsLink = document.getElementById('termsLink');
                 const confirmAgreeBtn = document.getElementById('confirmAgreeBtn');
                 const closeButton = document.querySelector('.close'); // Get the close button
+                
                 function showModal() {
-                  modal.style.display = 'block';
+                    modal.style.display = 'block';
                 }
+                
                 function hideModal() {
-                  modal.style.display = 'none';
+                    modal.style.display = 'none';
                 }
+                
+                function enableCheckboxAndCheck() {
+                    checkbox.checked = true;
+                    checkbox.disabled = false;
+                }
+                
                 termsLink.addEventListener('click', (event) => {
-                  event.preventDefault();
-                  showModal();
+                    event.preventDefault();
+                    showModal();
                 });
+                
                 confirmAgreeBtn.addEventListener('click', () => {
-                  checkbox.checked = true;
-                  hideModal(); 
+                    enableCheckboxAndCheck();
+                    hideModal(); 
                 });
+                
                 closeButton.addEventListener('click', hideModal);
-         </script>
+            </script>
                 <button type="submit" class="form-btn">{{ __('Register') }}</button> 
               </form>
               <p class="sign-up-label">

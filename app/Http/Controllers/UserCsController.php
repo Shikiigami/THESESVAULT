@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\research;
 use App\Models\college;
 use App\Models\favorites;
+use App\Models\requests;
 use App\Models\view;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +15,8 @@ class UserCsController extends Controller
     public function index(){
         $perPage = 12;
         $user = Auth::user();
+        $requests = requests::where('status', 'pending')
+        ->where('userId', $user->id);
         $userCsfiles = research::query()
         ->join('college', 'research.college', '=', 'college.id')
         ->select('research.*', 'college.college_name')
@@ -38,12 +41,12 @@ class UserCsController extends Controller
 
     $collegeCsAlgo = view::query()
     ->join('research', 'research.filename', '=', 'view.filename')
-    ->select('view.filename', 'research.college', view::raw('COUNT(DISTINCT VIEW.userview_id) as userCount'))
+    ->select('view.filename', 'research.college', view::raw('COUNT(DISTINCT view.userview_id) as userCount'))
     ->where('research.college', 131)
     ->groupBy('view.filename', 'research.college') 
     ->orderBy('userCount', 'DESC')
     ->get();
-    return view('layouts.user-cs', compact('userCsfiles', 'colleges','collegeCsAlgo'));
+    return view('layouts.user-cs', compact('userCsfiles', 'colleges','collegeCsAlgo','requests','user'));
     
     }
     public function csAddToFavorites(Request $request, $id)

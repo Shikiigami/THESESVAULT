@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -35,25 +36,30 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
     public function college()
     {
-        return $this->belongsTo(College::class, 'college_id', 'id');
+        return $this->belongsTo(college::class, 'college_id', 'id');
     }
     public function history()
     {
-        return $this->hasMany(History::class, 'user_id', 'id');
+        return $this->hasMany(history::class, 'user_id', 'id');
     }
     public function view()
     {
-        return $this->hasMany(View::class, 'userview_id', 'id');
+        return $this->hasMany(view::class, 'userview_id', 'id');
     }
     public function favorites()
     {
-        return $this->hasMany(Favorites::class, 'user_id', 'id');
+        return $this->hasMany(favorites::class, 'user_id', 'id');
     }
     
     public function user_college()
     {
-        return $this->hasMany(View::class, 'user_college', 'college_id');
+        return $this->hasMany(view::class, 'user_college', 'college_id');
     }
+
+    public function requests()
+{
+    return $this->hasMany(requests::class, 'userId', 'id');
+}
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -73,4 +79,29 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\SendPasswordResetNotification($token));
+    }
+    
+    public function RequestDeclinedNotification($editRequest)
+    {
+        $this->notify(new \App\Notifications\RequestDeclinedNotification($editRequest));
+    }
+    public function RequestApprovedNotification($editRequest)
+    {
+        $this->notify(new \App\Notifications\RequestApprovedNotification($editRequest));
+    }
+
+    public function sendFullTextRequestNotification($editFullRequest)
+    {
+        $this->notify(new \App\Notifications\FullTextRequestNotification($editFullRequest));
+    }
 }

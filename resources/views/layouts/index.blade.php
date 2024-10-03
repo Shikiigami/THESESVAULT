@@ -57,14 +57,14 @@ setTimeout(hidePreloader, 1000);
 </script>
 {{-- end of preloader --}}
   <!-- ======= Header ======= -->
-  @if (auth()->user()->role === 'admin')
+  @if (auth()->check() && (auth()->user()->role === 'admin' || auth()->user()->role === 'sub-admin'))
       @include('includes.header') {{-- Include the admin sidebar --}}
   @elseif (auth()->user()->role === 'user')
       @include('includes.user-header')  {{-- Include the user sidebar --}}
   @endif
 
   <!-- ======= Sidebar ======= -->
-  @if (auth()->user()->role === 'admin')
+@if (auth()->check() && (auth()->user()->role === 'admin' || auth()->user()->role === 'sub-admin'))
       @include('includes.aside')  {{-- Include the admin sidebar --}}
   @elseif (auth()->user()->role === 'user')
       @include('includes.user-aside')  {{-- Include the user sidebar --}}
@@ -344,15 +344,13 @@ setTimeout(hidePreloader, 1000);
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Most viewed Theses in your College</h5>
+                    <h5 class="card-title">Trending Topics</h5>
                     <!-- Bar Chart -->
                     <canvas id="barChart" style="max-height: 250px;"></canvas>
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <script>
                         var labelChart = JSON.parse('<?php echo json_encode($label_chart, JSON_HEX_QUOT | JSON_HEX_APOS); ?>');
                         var countUser = JSON.parse('<?php echo json_encode($count_user, JSON_HEX_QUOT | JSON_HEX_APOS); ?>');
-
-    
                         document.addEventListener("DOMContentLoaded", () => {
                             new Chart(document.querySelector('#barChart'), {
                                 type: 'bar',
@@ -399,9 +397,8 @@ setTimeout(hidePreloader, 1000);
                 </div>
             </div>
           </div>
-    @endif
+        @endif
           <div class="col-lg-12">
-              <!-- Your HTML/Blade code -->
               <div class="card">
                 <div class="card-body">
                     <div class="col-md-12">
@@ -425,14 +422,183 @@ setTimeout(hidePreloader, 1000);
             </div>
            
             </div>
+<!-- Pie Chart -->
+<div class="col-lg-12">
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Top Program in Research Performance</h5>
+    <div id="pieChart" style="min-height: 350px;" class="echart"></div>
+    @if(auth()->user()->role === 'admin')
+      <div class="d-flex justify-content-center">
+          <a class="btn btn-success btn-sm" style="margin-right: 5px;" href="{{ route('generate.Piepdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a>
+          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateProgram"><i class="bi bi-printer"></i> Report by Date</button>
+      </div>
+  @endif
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const label_program = JSON.parse('<?php echo json_encode($label_program); ?>');
+          const count_research = JSON.parse('<?php echo json_encode($count_research); ?>');
+          echarts.init(document.querySelector("#pieChart")).setOption({
+            tooltip: {
+              trigger: 'item'
+            },
+            legend: {
+              orient: 'horizontal',
+              left: 'left',
+              itemWidth: 5,  
+              itemHeight: 5
+          },
+            series: [{
+              name: 'Program',
+              type: 'pie',
+              radius: '50%',
+              data: count_research.map((count, index) => ({
+                value: count,
+                name: label_program[index],
+                emphasis: {
+                  itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)',
+                  }
+                }
+              }))
+            }]
+          });
+        });
+      </script>
+   
+
+  </div>
+</div>
+</div>
+<!-- End Pie Chart -->
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="filter">
+            </div>
+
+            <div class="card-body">
+              <h5 class="card-title">Recently Added <span>| Today</span></h5>
+
+              <div class="activity">
+              @php
+                    $colors = ['text-success', 'text-danger', 'text-primary', 'text-info', 'text-warning', 'text-muted'];
+              @endphp
+                @for ($i = 0; $i < count($files); $i++)
+                    <div class="activity-item d-flex">
+                        <div class="activite-label">{{ $files[$i]->formattedTimeDifference }}</div>
+                        <i class='bi bi-circle-fill activity-badge {{ $colors[$i % count($colors)] }} align-self-start'></i>
+                        <div class="activity-content">
+                            <a href="{{ route('get.view', ['filename' => $files[$i]->filename]) }}" class="fw-bold text-dark">{{ pathinfo($files[$i]->filename, PATHINFO_FILENAME) }}</a>
+                        </div>
+                        
+                    </div>
+                @endfor
+
+              </div>
+            </div>
+          </div><!-- End Recent Activity -->
           
+          <!-- Website Traffic -->
+          <div class="card">
+            <div class="filter">
+            </div>
+
+            <div class="card-body pb-0">
+              <h5 class="card-title">Top College in Research Performance<span>| Present</span></h5>
+              <div id="trafficChart" style="min-height: 300px;" class="echart"></div>
+              @if(auth()->user()->role === 'admin')
+                <div class="d-flex justify-content-center">
+                    <a class="btn btn-success btn-sm" style="margin-right: 5px;"  href="{{ route('generate.pdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a>
+                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateCollege"><i class="bi bi-printer"></i> Report by Date</button>
+                </div>
+            @endif
+              <h5 class="card-title"></h5>
+            </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              const labMyChart  = JSON.parse('<?php echo json_encode($lab_mychart); ?>');
+              const countMyCollege = JSON.parse('<?php echo json_encode($count_mycollege); ?>');
+              const chart = echarts.init(document.querySelector("#trafficChart"));
+              const customColors = ['rgba(255, 99, 132, 0.2)', '#3BB143'];
+
+                chart.setOption({
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    legend: {
+                        top: '5%',
+                        left: 'center'
+                    },
+                    series: [{
+                        name: 'College',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: '18',
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: countMyCollege.map((count, index) => ({
+                            value: count,
+                            name: labMyChart[index]
+                        }))
+                    }]
+                });
+            });
+        </script>
+        {{-- Generate By date Modal --}}
+        <div class="modal fade" id="generateByDateCollege" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered  modal-m">
+            <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title"><i class="bi bi-printer"></i> Generate By Date College</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              <form method="GET" action="{{ route('collegeReportDate') }}" enctype="multipart/form-data" class="row g-3 needs-validation">
+              <div class="col-6">
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" class="form-control" required>
+                </div>
+                <div class="col-6">
+                  <label for="end_date">End Date</label>
+                  <input type="date" id="end_date" name="end_date" class="form-control" required>
+                </div>
+              <div class="d-grid gap-2">
+              <button type="submit" name="submit" class="btn btn-primary btn-sm "><i class="bi bi-printer"></i> Create Report</button>
+              </div>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+            </div>
             @if(auth()->user()->role === 'user')
-            <div class="col-lg-6">
+            <div class="col-lg-12">
               <div class="card">
                 <div class="card-body">
             <h5 class="card-title">PalSU Colleges</h5>
-            <div class="d-flex justify-content-center align-items-center"> <!-- Center the image and text -->
-                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="max-width: 400px;"> <!-- Set max-width for the carousel -->
+            <div class="d-flex justify-content-center align-items-center">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="max-width: 400px;">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
                             <div class="d-flex align-items-center">
@@ -460,7 +626,7 @@ setTimeout(hidePreloader, 1000);
 </div>
 @endif
 @if(auth()->user()->role === 'user')
-<div class="col-lg-6">
+<div class="col-lg-12">
               <div class="card">
                 <div class="card-body">
             <h5 class="card-title">PalSU Courses</h5>
@@ -532,180 +698,6 @@ setTimeout(hidePreloader, 1000);
     </div>
 </div>
 @endif
-<!-- Pie Chart -->
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Number of Theses by Program</h5>
-    <!-- Pie Chart -->
-    <div id="pieChart" style="min-height: 350px;" class="echart"></div>
-    @if(auth()->user()->role === 'admin')
-      <div class="d-flex justify-content-center">
-          <a class="btn btn-success btn-sm" style="margin-right: 5px;" href="{{ route('generate.Piepdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a>
-          <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateProgram"><i class="bi bi-printer"></i> Report by Date</button>
-      </div>
-  @endif
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const label_program = JSON.parse('<?php echo json_encode($label_program); ?>');
-          const count_research = JSON.parse('<?php echo json_encode($count_research); ?>');
-          echarts.init(document.querySelector("#pieChart")).setOption({
-            tooltip: {
-              trigger: 'item'
-            },
-            legend: {
-              orient: 'horizontal',
-              left: 'left',
-              itemWidth: 5,  
-              itemHeight: 5
-          },
-            series: [{
-              name: 'Program',
-              type: 'pie',
-              radius: '50%',
-              data: count_research.map((count, index) => ({
-                value: count,
-                name: label_program[index],
-                emphasis: {
-                  itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)',
-                  }
-                }
-              }))
-            }]
-          });
-        });
-      </script>
-   
-
-  </div>
-</div>
-<!-- End Pie Chart -->
-          </div>
-        </div><!-- End Left side columns -->
-
-        <!-- Right side columns -->
-        <div class="col-lg-4">
-
-          <!-- Recent Activity -->
-          <div class="card">
-            <div class="filter">
-            </div>
-
-            <div class="card-body">
-              <h5 class="card-title">Recently Added <span>| Today</span></h5>
-
-              <div class="activity">
-              @php
-                    $colors = ['text-success', 'text-danger', 'text-primary', 'text-info', 'text-warning', 'text-muted'];
-              @endphp
-                @for ($i = 0; $i < count($files); $i++)
-                    <div class="activity-item d-flex">
-                        <div class="activite-label">{{ $files[$i]->formattedTimeDifference }}</div>
-                        <i class='bi bi-circle-fill activity-badge {{ $colors[$i % count($colors)] }} align-self-start'></i>
-                        <div class="activity-content">
-                            <a href="{{ route('get.view', ['filename' => $files[$i]->filename]) }}" class="fw-bold text-dark">{{ pathinfo($files[$i]->filename, PATHINFO_FILENAME) }}</a>
-                        </div>
-                        
-                    </div>
-                @endfor
-
-              </div>
-            </div>
-          </div><!-- End Recent Activity -->
-          
-          <!-- Website Traffic -->
-          <div class="card">
-            <div class="filter">
-            </div>
-
-            <div class="card-body pb-0">
-              <h5 class="card-title">Number of Theses by College <span>| Present</span></h5>
-              <div id="trafficChart" style="min-height: 300px;" class="echart"></div>
-              @if(auth()->user()->role === 'admin')
-                <div class="d-flex justify-content-center">
-                    <a class="btn btn-success btn-sm" style="margin-right: 5px;"  href="{{ route('generate.pdf.report') }}" target="_blank"><i class="bi bi-printer"></i> Generate report</a>
-                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#generateByDateCollege"><i class="bi bi-printer"></i> Report by Date</button>
-                </div>
-            @endif
-              <h5 class="card-title"></h5>
-            </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-              const labMyChart  = JSON.parse('<?php echo json_encode($lab_mychart); ?>');
-              const countMyCollege = JSON.parse('<?php echo json_encode($count_mycollege); ?>');
-              const chart = echarts.init(document.querySelector("#trafficChart"));
-              const customColors = ['rgba(255, 99, 132, 0.2)', '#3BB143'];
-
-                chart.setOption({
-                    tooltip: {
-                        trigger: 'item'
-                    },
-                    legend: {
-                        top: '5%',
-                        left: 'center'
-                    },
-                    series: [{
-                        name: 'College',
-                        type: 'pie',
-                        radius: ['40%', '70%'],
-                        avoidLabelOverlap: false,
-                        label: {
-                            show: false,
-                            position: 'center'
-                        },
-                        emphasis: {
-                            label: {
-                                show: true,
-                                fontSize: '18',
-                                fontWeight: 'bold'
-                            }
-                        },
-                        labelLine: {
-                            show: false
-                        },
-                        data: countMyCollege.map((count, index) => ({
-                            value: count,
-                            name: labMyChart[index],
-                            itemStyle: {
-                          color: labMyChart[index] === 'CEAT' ? 'rgba(255, 99, 132, 0.2)' : labMyChart[index] === 'CS' ? 'rgba(75, 192, 192, 0.2)' : customColors[index % customColors.length],
-                          borderColor: labMyChart[index] === 'CEAT' ? 'rgba(255, 99, 132, 1)' : labMyChart[index] === 'CS' ? 'rgb(75, 192, 192)' : customBorderColor,
-                          borderWidth: 1, 
-                        }
-                        }))
-                    }]
-                });
-            });
-        </script>
-        {{-- Generate By date Modal --}}
-        <div class="modal fade" id="generateByDateCollege" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered  modal-m">
-            <div class="modal-content">
-              <div class="modal-header">
-              <h5 class="modal-title"><i class="bi bi-printer"></i> Generate By Date College</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-              <form method="GET" action="{{ route('collegeReportDate') }}" enctype="multipart/form-data" class="row g-3 needs-validation">
-              <div class="col-6">
-                <label for="start_date">Start Date</label>
-                <input type="date" id="start_date" name="start_date" class="form-control" required>
-                </div>
-                <div class="col-6">
-                  <label for="end_date">End Date</label>
-                  <input type="date" id="end_date" name="end_date" class="form-control" required>
-                </div>
-              <div class="d-grid gap-2">
-              <button type="submit" name="submit" class="btn btn-primary btn-sm "><i class="bi bi-printer"></i> Create Report</button>
-              </div>
-              </div>
-              </form>
-            </div>
-          </div>
-        </div>
-            </div>
           </div><!-- End Website Traffic -->
 
           {{-- Generate By date Program --}}

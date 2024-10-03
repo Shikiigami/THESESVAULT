@@ -7,6 +7,8 @@ use App\Models\research;
 use App\Models\history;
 use App\Models\Adviser;
 use App\Models\college;
+use Illuminate\Support\Facades\DB;
+
 
 class CategorySearchController extends Controller
 {
@@ -108,6 +110,18 @@ class CategorySearchController extends Controller
     }
 
     public function searchByProgram(Request $request){
+    $result = DB::select("SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'interest'");
+        $enumValues = [];
+      if (!empty($result)) {
+          preg_match('/^enum\((.*)\)$/', $result[0]->COLUMN_TYPE, $matches);
+          if (isset($matches[1])) {
+              $enumValues = explode(',', $matches[1]);
+              $enumValues = array_map(function ($value) {
+                  return trim($value, "'");
+              }, $enumValues);
+          }
+      }
+        
         $searchHistory = new history();
         $searchHistory->search_name = $request->input('search_program');
         $searchHistory->user_id = auth()->user()->id;
@@ -136,6 +150,6 @@ class CategorySearchController extends Controller
             return redirect()->back()->with('error', 'No results found for your search.');
         }
     
-        return view('layouts.research-all', compact('files', 'colleges', 'userResearch','advisers'));
+        return view('layouts.research-all', compact('files', 'colleges', 'userResearch','advisers', 'enumValues'));
     }
 }

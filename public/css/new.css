@@ -196,5 +196,44 @@
 }
 
 
+.suggestions-container {
+  position: absolute;
+  width: calc(100% - 16px); /* Subtracting padding of col-lg-6 */
+  max-width: calc(50% - 16px); /* Subtracting padding of col-lg-6 */
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-container ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suggestions-container ul li {
+  list-style: none;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.suggestions-container ul li:hover {
+  background-color: #f0f0f0;
+}
+
+.suggestions-container .adviser-suggestion {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.suggestions-container .adviser-suggestion:hover {
+  background-color: #f0f0f0;
+}
+
+
 
 

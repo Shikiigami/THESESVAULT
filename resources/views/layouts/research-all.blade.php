@@ -16,7 +16,7 @@
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
   <!-- Vendor CSS Files -->
   <link href="{{ asset ('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
@@ -29,7 +29,6 @@
   <!-- Template Main CSS File -->
   <link href="{{ asset('css/style.css') }}" rel="stylesheet">
   <link href="{{ asset('css/new.css') }}"  rel="stylesheet">
-
 </head>
 
 <body>
@@ -69,7 +68,7 @@
 
       setTimeout(function () {
         alert.remove();
-      }, 1000); // Remove the alert after fading out
+      }, 5000); // Remove the alert after fading out
     });
   }, 2000); // Wait for 2 seconds before auto-fading
 });
@@ -82,8 +81,6 @@
     </ol>
   </nav>
 </div><!-- End Page Title -->
-
-
     <section class="section dashboard">
       <div class="row">
 
@@ -119,35 +116,55 @@
               <table class="table datatable table-hover">
                 <thead>
                   <tr>
-                    <th scope="col">Doc No.</th>
+                    <th scope="col">Call No.</th>
                     <th scope="col">Title</th>
                     <th scope="col">Authors</th>
                     <th scope="col">Program</th>
                     <th scope="col">Adviser</th>
                     <th scope="col">Campus</th>
-                    <th scope="col">Pub. Date</th>
+                    <th scope="col">Year</th>
                     <th scope="col">Action</th>
-                    
-                    
                   </tr>
                 </thead>
                 <tbody>
                     @foreach ($files as $file)
                     <tr>
                         <td scope="row">{{ $file->callno }}</td>
-                        <td><a href="{{ asset('storage\pdf/' . $file->filename) }}">{{ pathinfo($file->filename, PATHINFO_FILENAME) }}</a></td>
+                        <td><a href="{{ route('get.view', ['filename' => $file->filename]) }}">{{ pathinfo($file->filename, PATHINFO_FILENAME) }}</a></td>
                         <td>{{ $file->author }}</td>
                         <td>{{ $file->program }}</td>
                         <td>{{ $file->adviser }}</td>
                         <td>{{$file->campus}}</td>
-                        <td>{{ $file->date_published }}</td>
+                        <td>{{ \Carbon\Carbon::parse($file->date_published)->format('Y') }}</td>
                         <td style="vertical-align: middle!important;text-align: center;  ">
                           <div style="display: inline-flex; gap: 5px; justify-content: center;">
-                            <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Approval Sheet">
-                            <a href="{{ asset('storage/approvalSheet/' .$file->approvalSheet) }}" class="btn btn-success btn-sm">
+                            <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Approval / Abstract Sheet">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#approvalAbstract{{ $file->id }}" class="btn btn-success btn-sm">
                               <i class="bi bi-file-text"></i>
                           </a> 
                         </span>
+                        {{-- Approval sheet and Abstract Modal --}}    
+                        <div class="modal fade" id="approvalAbstract{{ $file->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Approval Sheet and Abstract</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Approval sheett">
+                                <p>View Approval Sheet: <span><a href=" {{ asset('storage/approvalSheet/' .$file->approvalSheet) }}">{{$file->approvalSheet}}</a></span></p>
+                              </span>
+                              <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View Abstract Sheet">
+                                <p>View Abstract: <span><a href=" {{ asset('storage/abstract/' .$file->abstract) }}">{{$file->abstract}}</a></span></p>
+                              </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                          {{-- End Approval sheet and Abstract Modal --}}
+
                         <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Edit File">                         
                           <a href="#" class="btn btn-warning btn-sm edit-modal-trigger" data-file="{{ json_encode($file) }}" data-target="#editModal_{{ $file->id }}"><i class="bi bi-pencil-square"></i></a>
                         </span>
@@ -171,6 +188,14 @@
                               <input type="text" name="author" class="form-control" value=""  >
                             </div>
                             <div class="col-6">
+                              <select class="form-control" name="college" placeholder="College" required>
+                              <option value="" disabled selected>Select</option>
+                                  @foreach ($colleges as $college)
+                                      <option value="{{ $college->id }}">{{ $college->college_name }}</option>
+                                  @endforeach
+                          </select>
+                            </div>
+                            <div class="col-6">
                             <select class="form-control" name="program" value=""  >
                             <option value="" disabled selected>Program</option>
                                     <option value="BS Information Technology">BS Information Technology</option>
@@ -183,34 +208,317 @@
                                     <option value="BS Petroleum Engineering">BS Petroleum Engineering</option>
                                     <option value="BS Electrical Engineering">BS Electrical Engineering</option>
                                     <option value="BS Architecture">BS Architecture</option>
+                                    <option value="BS Business Administration">BS Business Administration</option>
+                                    <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                    <option value="BS Management Accounting">BS Management Accounting</option>
+                                    <option value="BS Public Administration">BS Public Administration</option>
+                                    <option value="BS Nursing">BS Nursing</option>
+                                    <option value="Diploma in Midwifery">Diploma in Midwifery</option>
+                                    <option value="B Elementary Education">B Elementary Education</option>
+                                    <option value="B Physical Education">B Physical Education</option>
+                                    <option value="B Secondary Education">B Secondary Education</option>
+                                    <option value="BS Criminology">BS Criminology</option>
+                                    <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                    <option value="BS Tourism Management">BS Tourism Management</option>
+                                    <option value="BA Communication">BA Communication</option>
+                                    <option value="BA Philippine Studies">BA Philippine Studies</option>
+                                    <option value="BA Political Science">BA Political Science</option>
+                                    <option value="BS Psychology">BS Psychology</option>
+                                    <option value="BS Social Work">BS Social Work</option>
+                                    <option value="BS Agriculture">BS Agriculture</option>
+                                    <option value="BS Fisheries">BS Fisheries</option>
+                                    <option value="BT Vocational Teacher Education">BT Vocational Teacher Education</option>
+                                    <option value="B Industrial Technology">B Industrial Technology</option>
                                   </select>
                             </div>
-                            <div class="col-6">
-                                <select class="form-control" name="college" placeholder="College" required>
-                                <option value="" disabled selected>Select</option>
-                                    @foreach ($colleges as $college)
-                                        <option value="{{ $college->id }}">{{ $college->college_name }}</option>
-                                    @endforeach
-                            </select>
-                              </div>
-                              <div class="col-6">
-                              <select class="form-control" name="adviser" placeholder="Adviser" required>
-                                <option value="" disabled selected>Adviser</option>
-                                    @foreach ($advisers as $adviser)
-                                        <option value="{{ $adviser->adviser_name }}">{{ $adviser->adviser_name }}</option>
-                                    @endforeach
-                            </select>
-                              </div>
+                            
+                              <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                              <script>
+                                  $(document).ready(function(){
+                                      $('select[name="college"]').change(function(){
+                                          var collegeId = $(this).val();
+                                          if(collegeId == 130) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Civil Engineering">BS Civil Engineering</option>
+                                                  <option value="BS Mechanical Engineering">BS Mechanical Engineering</option>
+                                                  <option value="BS Petroleum Engineering">BS Petroleum Engineering</option>
+                                                  <option value="BS Electrical Engineering">BS Electrical Engineering</option>
+                                                  <option value="BS Architecture">BS Architecture</option>
+                                              `);
+                                          } else if(collegeId == 131) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Information Technology">BS Information Technology</option>
+                                                  <option value="BS Computer Science">BS Computer Science</option>
+                                                  <option value="BS Medical Biology">BS Medical Biology</option>
+                                                  <option value="BS Environmental Science">BS Environmental Science</option>
+                                                  <option value="BS Marine Biology">BS Marine Biology</option>    
+                                              `);
+                                          } else if(collegeId == 132) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Management Accounting">BS Management Accounting</option>
+                                                  <option value="BS Public Administration">BS Public Administration</option>
+                                                  
+                                              `);
+                                          }  else if(collegeId == 133) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Nursing">BS Nursing</option>
+                                                  <option value="Diploma in Midwifery">Diploma in Midwifery</option>               
+                                              `);
+                                          } else if(collegeId == 134) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="B Elementary Education">BS Elementary Education</option>
+                                                  <option value="B Physical Education">BS Physical Education</option>
+                                                  <option value="B Secondary Education">BS Secondary Education</option>               
+                                              `);
+                                          }
+                                          else if(collegeId == 135) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Criminology">BS Criminology</option>              
+                                              `);
+                                          } else if(collegeId == 136) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>             
+                                              `);
+                                          } else if(collegeId == 137) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BA Communication">BA Communication</option>
+                                                  <option value="BA Philippine Studies">BA Philippine Studies</option>
+                                                  <option value="BA Political Science">BA Political Science</option>
+                                                  <option value="BS Psychology">BS Psychology</option>
+                                                  <option value="BS Social Work">BS Social Work</option>
+                                                              
+                                              `);
+                                          } else if(collegeId == 138) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                              
+                                              `);
+                                          } else if(collegeId == 139) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                              
+                                              `);
+                                          } else if(collegeId == 140) {
+                                              $('select[name="program"]').html(`
+                                                 <option value="" disabled selected>Program</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Information Technology">BS Information Technology</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                              
+                                              `);
+                                          } else if(collegeId == 141) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="B Secondary Education">B Secondary Education</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                              
+                                              `);
+                                          } else if(collegeId == 142) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Criminology">BS Criminology</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                  <option value="B Secondary Education">B Secondary Education</option>
+                                                              
+                                              `);
+                                          } else if(collegeId == 143) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BA Political Science">BA Political Science</option>
+                                                  <option value="B Industrial Technology">B Industrial Technology</option>
+                                                  <option value="BS Criminology">BS Criminology</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                  <option value="B Secondary Education">B Secondary Education</option>
+                                                  <option value="BT Vocational Teacher Education">BT Vocational Teacher Education</option>
+                                                              
+                                              `);
+                                          } else if(collegeId == 144) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>         
+                                              `);
+                                          } else if(collegeId == 145) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Criminology">BS Criminology</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>        
+                                              `);
+                                          } else if(collegeId == 146) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>
+                                                  <option value="BS Fisheries">BS Fisheries</option>    
+                                              `);
+                                          } else if(collegeId == 147) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BA Political Science">BA Political Science</option>
+                                                  <option value="BS Criminology">BS Criminology</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="BS Computer Science">BS Computer Science</option>
+                                              `);
+                                          } else if(collegeId == 148) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="BS Information Technology">BS Information Technology</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                  <option value="B Secondary Education">B Secondary Education</option>
+                                              `);
+                                          } else if(collegeId == 149) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="BS Computer Science">BS Computer Science</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Environmental Science">BS Environmental Science</option>
+                                              `);
+                                          }  else if(collegeId == 150 ) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                  <option value="B Secondary Education">B Secondary Education</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Criminology">BS Criminology</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                              `);
+                                          } else if(collegeId == 151 ) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                              `);
+                                          } else if(collegeId == 152 ) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BA Political Science">BA Political Science</option>
+                                                  <option value="BS Computer Science">BS Computer Science</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Environmental Science">BS Environmental Science</option>
+                                                  <option value="BS Tourism Management">BS Tourism Management</option>
+                                              `);
+                                          } else if(collegeId == 153 ) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="B Elementary Education">B Elementary Education</option>
+                                                  <option value="B Secondary Education">B Secondary Education</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                                  <option value="BS Agriculture">BS Agriculture</option>
+                                              `);
+                                          } else if(collegeId == 154 ) {
+                                              $('select[name="program"]').html(`
+                                                  <option value="" disabled selected>Program</option>
+                                                  <option value="BS Business Administration">BS Business Administration</option>
+                                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                                  <option value="BS Information Technology">BS Information Technology</option>
+                                              `);
+                                          }
+
+
+                                      });
+                                  });
+                              </script>
+                              <div class="col-lg-6 position-relative">
+                            <input class="form-control" type="text" name="adviser" placeholder="Adviser" required value="">
+                            <div class="custom-select" id="adviserList" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; max-width: calc(100% - 2px); z-index: 100; background-color: #fff; border: 1px solid #ced4da; border-top: none; overflow-y: auto; padding: 8px; border-radius: 8px;">
+                                @foreach ($advisers as $adviser)
+                                    <div class="option" style="padding: 2px;">{{ $adviser->adviser_name }}</div>
+                                @endforeach
+                            </div>
+                        </div>
+                        
+                          <script>
+                              $('input[name="adviser"]').on('input', function() {
+                                  var input = $(this).val().toLowerCase();
+                                  var options = $('#adviserList').find('.option');
+                          
+                                  options.each(function() {
+                                      var optionText = $(this).text().toLowerCase();
+                                      if (optionText.indexOf(input) > -1) {
+                                          $(this).show();
+                                      } else {
+                                          $(this).hide();
+                                      }
+                                  });
+                          
+                                  $('#adviserList').show();
+                              });
+                          
+                              $(document).on('click', function(e) {
+                                  if (!$(e.target).closest('#adviserList').length && !$(e.target).is('input[name="adviser"]')) {
+                                      $('#adviserList').hide();
+                                  }
+                              });
+                          
+                              $(document).on('click', '.option', function() {
+                                  var selectedValue = $(this).text();
+                                  $('input[name="adviser"]').val(selectedValue);
+                                  $('#adviserList').hide();
+                              });
+                          </script>            
                               <div class="col-6">
                                 <input type="date" name="date_published" class="form-control"  value=""   >
                               </div>
                               <div class="col-6">
+                                <textarea  name="tags" rows="1" class="form-control" placeholder="Tags"  value="" ></textarea>
+                              </div>
+                              <div class="col-6">
+                                <select class="form-control" name="privacy" value="" required>
+                                  <option value="" disabled selected>Select Thesis Privacy</option>
+                                  <option value="public">Public</option>
+                                  <option value="restricted">Restricted</option>
+                                </select>
+                              </div>
+                              <div class="col-6">
                                 <select class="form-control" name="fieldname" value="" required>
-                                    <option value="" disabled selected>Field Name</option>
-                                    <option value="Business" >Business</option>
-                                    <option value="Technology">Technology</option>
-                                    <option value="Education">Education</option>
-                                  </select>
+                                  
+                                  @foreach($enumValues as $value)
+                                  <option value="{{ $value }}">{{ $value }}</option>
+                                  @endforeach
+                                </select>
                               </div>
                               <div class="col-6">
                                 <select class="form-control" name="campus" placeholder="Campus" value="" required>
@@ -241,13 +549,17 @@
                               <div class="col-6">
                                 <input type="text" class="form-control" name="drive_link" value="" placeholder="Pdf Drive Link">
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                   <label for="filename"> Thesis PDF file:</label>
                                 <input type="file" class="form-control" name="filename" accept=".pdf" value="">
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                   <label for="approvalSheet"> Approval Sheet:</label>
                                 <input type="file" class="form-control" name="approvalSheet" accept=".pdf" value="">
+                                </div>
+                                <div class="col-4">
+                                  <label for="abstract"> Abstract:</label>
+                                <input type="file" class="form-control" name="abstract" accept=".pdf" value="">
                                 </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
@@ -296,7 +608,6 @@
         </table>
       </div>
     </div>
-
 </div>
 </section>
 
@@ -320,8 +631,16 @@
               <input type="text" name="author" class="form-control" placeholder="Authors" required >
             </div>
             <div class="col-6">
-            <select class="form-control" name="program" placeholder="Program" required>
-                    <option value="" disabled selected>Program</option>
+              <select class="form-control" name="college" placeholder="College" required>
+              <option value="" disabled selected>Select College</option>
+                  @foreach ($colleges as $college)
+                      <option value="{{ $college->id }}">{{ $college->college_name }}</option>
+                  @endforeach
+          </select>
+            </div>
+            <div class="col-6">
+            <select class="form-control" name="program" required >
+            <option value="" disabled selected>Program</option>
                     <option value="BS Information Technology">BS Information Technology</option>
                     <option value="BS Computer Science">BS Computer Science</option>
                     <option value="BS Medical Biology">BS Medical Biology</option>
@@ -331,34 +650,158 @@
                     <option value="BS Mechanical Engineering">BS Mechanical Engineering</option>
                     <option value="BS Petroleum Engineering">BS Petroleum Engineering</option>
                     <option value="BS Electrical Engineering">BS Electrical Engineering</option>
-                    <option value="BS Architecture">BS Architecture</option>    
+                    <option value="BS Architecture">BS Architecture</option>
+                    <option value="BS Business Administration">BS Business Administration</option>
+                    <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                    <option value="BS Management Accounting">BS Management Accounting</option>
+                    <option value="BS Public Administration">BS Public Administration</option>
+                    <option value="BS Nursing">BS Nursing</option>
+                    <option value="Diploma in Midwifery">Diploma in Midwifery</option>
+                    <option value="BS Elementary Education">BS Elementary Education</option>
+                    <option value="BS Physical Education">BS Physical Education</option>
+                    <option value="BS Secondary Education">BS Secondary Education</option>
+                    <option value="BS Criminology">BS Criminology</option>
+                    <option value="BS Hospitality Management">BS Hospitality Management</option>
+                    <option value="BS Tourism Management">BS Tourism Management</option>
+                    <option value="BA Communication">BA Communication</option>
+                    <option value="BA Philippine Studies">BA Philippine Studies</option>
+                    <option value="BA Political Science">BA Political Science</option>
+                    <option value="BS Psychology">BS Psychology</option>
+                    <option value="BS Social Work">BS Social Work</option>
                   </select>
             </div>
-            <div class="col-6">
-                <select class="form-control" name="college" placeholder="College" required>
-                <option value="" disabled selected>College</option>
-                    @foreach ($colleges as $college)
-                        <option value="{{ $college->id }}">{{ $college->college_name }}</option>
-                    @endforeach
-            </select>
-              </div>
-            <div class="col-6">
-            <select class="form-control" name="adviser" placeholder="Adviser" required>
-                <option value="" disabled selected>Adviser</option>
-                    @foreach ($advisers as $adviser)
-                        <option value="{{ $adviser->adviser_name }}">{{ $adviser->adviser_name }}</option>
-                    @endforeach
-            </select>
-              </div>
+              <script>
+                  $(document).ready(function(){
+                      $('select[name="college"]').change(function(){
+                          var collegeId = $(this).val();
+                          if(collegeId == 130) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BS Civil Engineering">BS Civil Engineering</option>
+                                  <option value="BS Mechanical Engineering">BS Mechanical Engineering</option>
+                                  <option value="BS Petroleum Engineering">BS Petroleum Engineering</option>
+                                  <option value="BS Electrical Engineering">BS Electrical Engineering</option>
+                                  <option value="BS Architecture">BS Architecture</option>
+                              `);
+                          } else if(collegeId == 131) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BS Information Technology">BS Information Technology</option>
+                                  <option value="BS Computer Science">BS Computer Science</option>
+                                  <option value="BS Medical Biology">BS Medical Biology</option>
+                                  <option value="BS Environmental Science">BS Environmental Science</option>
+                                  <option value="BS Marine Biology">BS Marine Biology</option>    
+                              `);
+                          } else if(collegeId == 132) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BS Business Administration">BS Business Administration</option>
+                                  <option value="BS Entrepreneurship">BS Entrepreneurship</option>
+                                  <option value="BS Management Accounting">BS Management Accounting</option>
+                                  <option value="BS Public Administration">BS Public Administration</option>
+                                  
+                              `);
+                          }  else if(collegeId == 133) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BS Nursing">BS Nursing</option>
+                                  <option value="Diploma in Midwifery">Diploma in Midwifery</option>               
+                              `);
+                          } else if(collegeId == 134) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BS Elementary Education">BS Elementary Education</option>
+                                  <option value="BS Physical Education">BS Physical Education</option>
+                                  <option value="BS Secondary Education">BS Secondary Education</option>               
+                              `);
+                          }
+                          else if(collegeId == 135) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BS Criminology">BS Criminology</option>              
+                              `);
+                          } else if(collegeId == 136) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BS Hospitality Management">BS Hospitality Management</option>
+                                  <option value="BS Tourism Management">BS Tourism Management</option>             
+                              `);
+                          } else if(collegeId == 137) {
+                              $('select[name="program"]').html(`
+                                  <option value="" disabled selected>Program</option>
+                                  <option value="BA Communication">BA Communication</option>
+                                  <option value="BA Philippine Studies">BA Philippine Studies</option>
+                                  <option value="BA Political Science">BA Political Science</option>
+                                  <option value="BS Psychology">BS Psychology</option>
+                                  <option value="BS Social Work">BS Social Work</option>
+                                              
+                              `);
+                          }
+
+                      });
+                  });
+              </script>
+              <div class="col-6">
+            <input class="form-control" type="text" name="adviser" id="adviserInput" placeholder="Adviser" required>
+            <div id="adviserSuggestions" class="suggestions-container"></div>
+        </div>        
+         <script>
+          // Function to show search results based on input query
+              function showAdviserResults(query) {
+                  $.ajax({
+                      url: "/filter-advisers", // Adjust the URL to your endpoint
+                      type: "GET",
+                      data: { adviser: query },
+                      success: function(data) {
+                          $('#adviserSuggestions').empty(); // Corrected here
+
+                          $.each(data, function(key, value) {
+                            var adviserItem = $('<li style="list-style-type: none; padding: 8px;"> ' + value.adviser_name + '</li>');
+                              adviserItem.on('click', function() {
+                                  $('#adviserInput').val(value.adviser_name);
+                                  $('#adviserSuggestions').hide(); // Corrected here
+                              });
+                              $('#adviserSuggestions').append(adviserItem); // Corrected here
+                          });
+
+                          $('#adviserSuggestions').show(); // Corrected here
+                      },
+                      error: function(xhr, status, error) {
+                          console.error('Error fetching advisers:', error);
+                      }
+                  });
+              }
+              // Handle keyup event for text input
+              $('#adviserInput').on('keyup', function() {
+                  var query = $(this).val().trim();
+
+                  if (query === '') {
+                      $('#adviserSuggestions').hide(); // Corrected here
+                      return;
+                  }
+
+                  showAdviserResults(query);
+              });
+                        </script> 
               <div class="col-6">
                 <input type="date" name="date_published" class="form-control"  placeholder ="Published Date" required >
               </div>
               <div class="col-6">
+                <textarea  name="tags" rows="1" class="form-control" placeholder="Tags"  value="" ></textarea>
+              </div>
+              <div class="col-6">
+                <select class="form-control" name="privacy" value="" required>
+                  <option value="" disabled selected>Select Thesis Privacy</option>
+                  <option value="public">Public</option>
+                  <option value="restricted">Restricted</option>
+                </select>
+              </div>
+              <div class="col-6">
                 <select class="form-control" name="fieldname" placeholder="Field Name" required>
-                    <option value="" disabled selected>Field Name</option>
-                    <option value="Business" >Business</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Education">Education</option>
+                  <option value="" selected disabled> Field Name</option>
+                  @foreach($enumValues as $value)
+                  <option value="{{ $value }}">{{ $value }}</option>
+                  @endforeach
                   </select>
               </div>
               <div class="col-6">
@@ -390,13 +833,17 @@
               <div class="col-6">
                 <input type="text" class="form-control" name="drive_link" placeholder="Pdf Drive Link">
                 </div>
-              <div class="col-6">
+              <div class="col-4">
                 <label for="filename"> Thesis PDF file:</label>
               <input type="file" class="form-control" name="filename" accept=".pdf" required>
               </div>
-              <div class="col-6">
+              <div class="col-4">
                 <label for="filename"> Approval Sheet:</label>
               <input type="file" class="form-control" name="approvalSheet" accept=".pdf" required>
+              </div>
+              <div class="col-4">
+                <label for="abstract"> Abstract:</label>
+              <input type="file" class="form-control" name="abstract" accept=".pdf" required>
               </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
@@ -413,16 +860,19 @@
       &copy; Copyright <strong><span>PSU Library</span></strong>. All Rights Reserved
     </div>
     <div class="credits">
-      <!-- All the links in the footer should remain intact. -->
-      <!-- You can delete the links only if you purchased the pro version. -->
-      <!-- Licensing information: https://bootstrapmade.com/license/ -->
-      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
       Designed by <a href="http://psulibrary.palawan.edu.ph/home/">Palawan State University</a>
     </div>
   </footer><!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-  
+  <script>
+    $(document).ready(function() {
+      // Initialize Select2
+      $('#selectField').select2({
+        placeholder: "Search for an option"
+      });
+    });
+  </script>
   <!-- Vendor JS Files -->
   <script src="{{ asset('vendor/apexcharts/apexcharts.min.js') }}"></script>
   <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -433,6 +883,8 @@
   <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 
   <!-- Template Main JS File -->
@@ -463,7 +915,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const campusField = editModal.querySelector('[name="campus"]');
             const citationField = editModal.querySelector('[name="citation"]');
             const drive_linkField = editModal.querySelector('[name="drive_link"]');
-
+            const tagsField = editModal.querySelector('[name="tags"]');
+            const privacyField = editModal.querySelector('[name="privacy"]');
             // Set values in the modal fields
             idField.value = fileData.id;
             callnoField.value = fileData.callno;
@@ -476,6 +929,8 @@ document.addEventListener('DOMContentLoaded', function () {
             campusField.value = fileData.campus;
             citationField.value = fileData.citation;
             drive_linkField.value =fileData.drive_link;
+            tagsField.value =fileData.tags;
+            privacyField.value =fileData.privacy;
 
             const bsModal = new bootstrap.Modal(editModal);
             bsModal.show();

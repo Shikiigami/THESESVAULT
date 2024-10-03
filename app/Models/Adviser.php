@@ -14,11 +14,11 @@ class Adviser extends Model
 
     public function college_aid()
     {
-        return $this->belongsTo(College::class, 'adviser_college', 'id');
+        return $this->belongsTo(college::class, 'adviser_college', 'id');
     }
     public function adviser()
     {
-        return $this->hasMany(Research::class, 'adviser', 'adviser_name');
+        return $this->hasMany(research::class, 'adviser', 'adviser_name');
     }
 }
 

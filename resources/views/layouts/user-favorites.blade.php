@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>List of all Favorites</title>
+  <title>List of all Bookmarks</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
   
@@ -66,7 +66,7 @@ setTimeout(hidePreloader, 1000);
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1><img src="{{ asset ('img/user-favorite.png') }}" alt="img" width="40" height="40"> My Favorites</h1>
+      <h1><img src="{{ asset ('img/user-favorite.png') }}" alt="img" width="40" height="40"> My Bookmarks</h1>
       <div class="fixed-top-alert">
   @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show falling-alert" role="alert">
@@ -102,7 +102,7 @@ setTimeout(hidePreloader, 1000);
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Home</a></li>
-          <li class="breadcrumb-item active">Favorites</li>
+          <li class="breadcrumb-item active">Bookmarks</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -110,7 +110,7 @@ setTimeout(hidePreloader, 1000);
   <section class="section dashboard">
   <div class="row">
     @if ($userFavorites->isEmpty())
-        <p>No favorites selected.</p>
+        <p>No Bookmarks selected.</p>
     @else
 
     @foreach ($userFavorites as $favorites)
@@ -139,8 +139,13 @@ setTimeout(hidePreloader, 1000);
               </div>
             </div>
             <div class="d-flex align-items-start" style="float: right; margin: 10px;">
-              <a href="#" data-bs-toggle="modal" data-bs-target="#citation{{$favorites->fid}}"><span class="btn btn-success btn-sm align-items-start;"><i class="bi bi-chat-quote-fill"></i> Citation</span></a>&nbsp;
+              <a href="#" data-bs-toggle="modal" data-bs-target="#request{{$favorites->fid}}"><span class="btn btn-success btn-sm align-items-start;"><i class="bi bi-hand-index-thumb"></i> Request</span></a>&nbsp;
+              @if($favorites->privacy === 'public')
               <a href="{{ route('get.view', ['filename' => $favorites->filename]) }}" target="_blank"><span class="btn btn-warning btn-sm align-items-start"><i class="bi bi-eye-fill"></i> View</span></a>&nbsp;
+              @endif
+              @if($favorites->privacy === 'restricted')
+              <a href="#" data-bs-toggle="modal" data-bs-target="#fullrequest{{$favorites->fid}}"><span class="btn btn-danger btn-sm align-items-start"><i class="bi bi-eye-fill"></i> View</span></a>&nbsp;
+              @endif
             </div>
           </div>
         </div>
@@ -158,11 +163,16 @@ setTimeout(hidePreloader, 1000);
               <b class="text-dark">Tittle: </b>{{$favorites->filename}}<br>
               <b class="text-dark">Authors: </b>{{$favorites->author}} <br>
               <b class="text-dark">Published Date: </b> {{$favorites->date_published}}<br>
-              @php
-                $collegeName = ($favorites->college == 130) ? 'CEAT' : (($favorites->college == 131) ? 'CS' : 'N/A');
-                @endphp
-              <b class="text-dark">College: </b>{{$collegeName}}<br>
-              <b class="text-dark">Adviser: </b>{{$favorites->adviser}}
+              <b class="text-dark">Program: </b>{{$favorites->program}}<br>
+              <b class="text-dark">Citation: </b><br>
+              <div class="citationContainer">
+               <span class="text-primary small pt-1" style="display: flex; align-items: center;">
+                   <code class="citationCode" style="margin: 0; padding: 10px; background-color: #f8f9fa; border: 1px solid #d1d1d1; border-radius: 4px; display: flex; align-items: center; width: 100%;">
+                       {{$favorites->citation}}
+                   </code>
+                   <i class="ri-file-copy-2-line text-success clipboardIcon"  style="font-size: 30px; margin-left: 10px; cursor: pointer;"></i>
+               </span>
+           </div>
               </p>
             
           </div>
@@ -172,27 +182,61 @@ setTimeout(hidePreloader, 1000);
         </div>
       </div>
     </div><!-- End view Modal-->
+{{-- Request Modal --}}
 
-     <!-- Citatation modal -->
-   <div class="modal fade" id="citation{{$favorites->fid}}" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered  modal-m">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">{{ pathinfo($favorites->filename, PATHINFO_FILENAME) }}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-        <h5 class="text" style="display: flex; align-items: center;">
-    <i class="ri-file-list-line" style="font-size: 50px;"></i>
-    <span class="text-success small pt-1 fw-bold" style="margin-left: 10px;">
-    {{$favorites->citation}}
-    </span>
-       </h5>
+    <div class="modal fade" id="request{{$favorites->fid}}" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-m">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Request Approval sheet of {{ pathinfo($favorites->filename, PATHINFO_FILENAME) }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="width: 100%;">
+                  <form method="POST" action="{{route('request.add', ['id'=> $favorites->research_id]) }}" class="row g-3 needs-validation">
+                    @csrf
+                    <div class="col-6">
+                      <input type="text" name="purpose" class="form-control" placeholder="Purpose" required>
+                    </div>
+                    <div class="col-6">
+                      <select  name="receive_thru" class="form-control" placeholder="Receive Thru" required >
+                        <option value="" disabled selected>Receive Thru</option>
+                        <option value="Email">Email</option>
+                        <option value="F2F Transaction">F2F Transaction</option>
+                      </select>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                      <button type="submit" name="submit" class="btn btn-primary "> Request</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
       </div>
     </div>
+
+<!-- full-text requests modal -->
+<div class="modal fade" id="fullrequest{{$favorites->fid}}" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-m">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Request Full Text document of {{ pathinfo($favorites->filename, PATHINFO_FILENAME) }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" style="width: 100%;">
+              <form method="POST" action="{{route('fullrequest.add', ['id'=> $favorites->research_id]) }}" class="row g-3 needs-validation">
+                @csrf
+                <div class="col-12">
+                  <input type="text" name="purpose" class="form-control" placeholder="Purpose" required>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                  <button type="submit" name="submit" class="btn btn-primary "> Request</button>
+                  </div>
+              </form>
+          </div>
+      </div>
   </div>
-  </div> <!--End of Citation Modal -->
-     
+</div>
     @endforeach
    @endif
   </div>
